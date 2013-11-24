@@ -1,0 +1,149 @@
+Quick Ray Trace to GIF file conversion program version 1.1
+3-15-89  By Ron Harold
+CIS [73657,2746] (in the PICS forum please)
+Prodigy HMDG29A
+
+What is it:
+        This program is used to convert the output of the
+        Quick Ray Trace (QRT) program and convert it to a file
+        meeting the Graphics Interchange Format (GIF)
+        standard.
+
+        This program is intended to run on IBM compatible
+        computers.
+
+How to use it:
+        After getting an output from QRT simply type:
+        QRT2GIF inputfile outputfile [options]
+
+        inputfile is the COMPLETE name (with path and
+        extention) of the file created by QRT.
+
+        outputfile is the COMPLETE name (with path and
+        extention) for the GIF file output
+
+        options are switches that are explained in the
+        advanced section below.
+
+        An example: QRT2GIF FILE.RAW FILE.GIF
+
+        The GIF created will be up to 256 colors and the
+        same resolution as that created by QRT.
+
+Advanced options:
+        The default method of operating is for the program
+        to find the most colors it can (up to 256) and then
+        attempt to "brighten" the picture up as much as
+        possible.  Two switches allow you to alter these
+        defaults.
+
+        -cNNN  is the maximum number of colors to try for
+        you can specify any number you wish here and the
+        program will create a picture with no more than that
+        number of colors (it will go lower if the picture
+        does not have that many colors in it).  The GIF
+        standard requires the number of colors be a binary
+        value but this program will only fill in the number
+        of places you specify and will then create a GIF
+        with the other places blank.
+
+        Example: QRT2GIF FILE.RAW FILE.GIF -C129
+                Creates a GIF w/256 palette options but only
+                the first 129 will be filled in.
+
+        -sN is the maximum amount to brighten the picture by
+        on post processing (in bits).
+
+        The file that is created by QRT contains values for
+        24 bits of color.  When we convert this to the 18
+        bits of VGA data it tends to be a little dim.  To
+        brighten things up QRT2GIF shifts all the values as
+        much as possible to their brightest values. If you
+        wish to limit this increase then you can lower the
+        amount of the shift by adding the -s command.
+        -s8  (default) causes the value to be shifted to its
+        brightest value possible. -s0 causes it not be be
+        shifted at all.  Usually the value is only shifted
+        by 2 or 3 in operation.
+
+        QRT2GIF FILE.RAW FILE.GIF -S0
+                Causes the picture to be created without any
+                color brightening.
+
+        - mNNNN adjust maximum table size for the GIF.  This
+        is used as a speed up for the GIF the lower the
+        value the faster the GIF conversion will be but less
+        compression that will occur.
+
+        - qNNNN alternate adjustment of the table size of
+        the GIF. This method is similar to the -m but it
+        will work a LOT faster. The problems are documented
+        below under caveats.
+
+What it is doing:
+         QRT2GIF uses two passes over the data.  The first
+         pass creates a Palette table for the GIF.  It
+         attempts to create the maximum number of colors
+         possible but if too many colors exist then the
+         resolution of the table is lowered until the entire
+         picture is calculated.
+
+        The second pass creates the actual GIF by doing the
+        compression.
+
+        On a 10MHZ 1 wait state machine it will require
+        about 8-10 min. to create a GIF (This is of course is
+        based upon the resolution of the input file). If you
+        use the -q option (try -q1000) it will reduce to 2-4
+        min. range.
+
+Some Caveats:
+        The GIF standard does not say that the method I use
+        for the -Q is legal (it also does not exactly
+        prohibit it) and I have not had any problems with
+        any GIF viewer program I have tried.  But if you get
+        some strange results you might not want to use the
+        -Q option instead use the -M option for speed ups.
+
+        As I feel sorry for some sysops, if you make a great
+        GIF with this program please DO NOT use the -q or -m
+        options (give them as small a GIF as possible).
+                                                       
+
+Some Credits:
+            GIF is tm of Compuserve and Compuserve is an H&R
+            Block Company.
+
+
+The Bottom Line:
+            As this is a limited use program all I ask for in
+            support is that you don't distribute or sell it
+            without my permission.  If you have any bug
+            reports or problems or suggestions you can
+            contact me on the above accounts. The preferred
+            contact is via Prodigy since I can check in more
+            frequently there without charge.
+
+
+History:
+
+V1.0
+        Initial release
+
+V1.1
+        Fixed problems with some viewer programs (now
+        creates completely normal GIFs.  (Note for other
+        developers some programs get real picky about having
+        an EOI on the end of the GIF).
+
+        Enhanced palette table calculation (now creates more
+        accurate color rendention)
+
+        Updated encoder routine to use maximum string table
+        for maximum compressed GIFs
+
+        added -m and -q options to compensate for slowness
+        of GIF encoder algorithm (I guess I will have to
+        code it in assembly for more speed next time).
+
+

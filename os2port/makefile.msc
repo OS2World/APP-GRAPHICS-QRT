@@ -1,0 +1,72 @@
+
+OBJFILES = bbox.obj error.obj inout.obj instance.obj intersec.obj lexer.obj \
+           mth.obj norm.obj offset.obj pattern.obj patterni.obj precomp.obj \
+           qrt.obj ray.obj relpos.obj resize.obj stack.obj
+
+SRCFILES = bbox.c error.c inout.c instance.c intersec.c lexer.c \
+           mth.c norm.c offset.c pattern.c patterni.c precomp.c \
+           qrt.c ray.c relpos.c resize.c stack.c qrt.h pattern.h \
+           header.h
+
+FLAGS    = -O /F E000 /AL 
+
+qrt: $(OBJFILES)
+	cl $(FLAGS) -o qrt $(OBJFILES) 
+
+bbox.obj: bbox.c qrt.h
+	cl $(FLAGS) -c bbox.c
+
+error.obj: error.c qrt.h
+	cl $(FLAGS) -c error.c
+
+inout.obj: inout.c qrt.h pattern.h
+	cl $(FLAGS) -c inout.c
+
+intersec.obj: intersec.c qrt.h
+	cl $(FLAGS) -c intersec.c
+
+instance.obj: instance.c qrt.h
+	cl $(FLAGS) -c instance.c
+
+lexer.obj: lexer.c qrt.h
+	cl $(FLAGS) -c lexer.c
+
+mth.obj: mth.c qrt.h
+	cl $(FLAGS) -c mth.c
+
+norm.obj: norm.c qrt.h
+	cl $(FLAGS) -c norm.c
+
+offset.obj: offset.c qrt.h
+	cl $(FLAGS) -c offset.c
+
+pattern.obj: pattern.c qrt.h pattern.h
+	cl $(FLAGS) -c pattern.c
+
+patterni.obj: patterni.c qrt.h pattern.h
+	cl $(FLAGS) -c patterni.c
+
+precomp.obj: precomp.c qrt.h
+	cl $(FLAGS) -c precomp.c
+
+qrt.obj: qrt.c qrt.h qrt.h
+	cl $(FLAGS) -c qrt.c
+
+ray.obj: ray.c qrt.h
+	cl $(FLAGS) -c ray.c
+
+relpos.obj: relpos.c qrt.h
+	cl $(FLAGS) -c relpos.c
+
+resize.obj: resize.c qrt.h
+	cl $(FLAGS) -c resize.c
+
+stack.obj: stack.c qrt.h pattern.h
+	cl $(FLAGS) -c stack.c
+
+qrtpost: qrtpost.obj
+	cl -o qrtpost qrtpost.obj
+
+qrtpost.obj: qrtpost.c
+	cl $(FLAGS) -c qrtpost.c
+

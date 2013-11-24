@@ -1,0 +1,190 @@
+           {**********************************
+
+              Room - brick walls and a
+              mirrored sphere in the middle.
+
+            **********************************}
+
+
+           FILE_NAME = ROOM4.RAW
+
+
+           { *********   Some pattern definitions ********** }
+
+           PATTERN ( x_size = 16,  { ** A checkered pattern ** }
+                     y_size = 16,
+                     name   = CHECK,
+
+                     RECTANGLE (
+                       start_x = 0, start_y = 0,
+                       end_x   = 8, end_y   = 8,
+
+                       diff    = (1, .20, .20);
+                     )
+                     RECTANGLE (
+                       start_x = 8, start_y = 8,
+                       end_x   = 16, end_y   = 16,
+
+                       diff    = (1.00, .20, .20);
+                     )
+                   )
+
+           PATTERN ( x_size = 80,        { ** brick pattern ** }
+                     y_size = 50,
+                     name   = BRICK,
+                     RECTANGLE (
+                       start_x = 0, start_y = 2,
+                       end_x   = 18, end_y   = 23,
+                       diff    = (1.00, .20, .20);
+                     )
+                     RECTANGLE (
+                       start_x = 62, start_y = 2,
+                       end_x   = 80, end_y   = 23,
+                       diff    = (1.00, .20, .20);
+                     )
+                     RECTANGLE (
+                       start_x = 22, start_y = 2,
+                       end_x   = 58, end_y   = 23,
+                       diff    = (.80, .20, .20);
+                     )
+                     RECTANGLE (
+                       start_x = 2, start_y = 27,
+                       end_x   = 38, end_y   = 48,
+                       diff    = (.85, .35, .10);
+                     )
+                     RECTANGLE (
+                       start_x = 42, start_y = 27,
+                       end_x   = 78, end_y   = 48,
+                       diff    = (.70, .25, .20);
+                     )
+                   )
+
+
+           { *******   Now for the room itself  ******** }
+
+               { ** four walls ** }
+
+               PARALLELOGRAM ( loc  = (  0,  0, -100),
+                               v1   = (100,  0,    0),
+                               v2   = (  0, 50,    0),
+                               pattern = BRICK,
+
+                               xmult = .2,
+                               ymult = .2
+                             )
+
+               PARALLELOGRAM ( loc  = (  0,  0,  100),
+                               v1   = (100,  0,    0),
+                               v2   = (  0, 50,    0),
+                               pattern = BRICK,
+                               xmult = .2,
+                               ymult = .2
+                             )
+
+               PARALLELOGRAM ( loc  = (100,  0, -100),
+                               v1   = (  0,  0,  200),
+                               v2   = (  0, 50,    0),
+                               pattern = BRICK
+                               xmult = .2,
+                               ymult = .2
+                             )
+
+               PARALLELOGRAM ( loc  = (  0,  0, -100),
+                               v1   = (  0,  0,  200),
+                               v2   = (  0, 50,    0),
+                               pattern = BRICK,
+                               xmult = .2,
+                               ymult = .2,
+                             )
+
+               { ** a floor ** }
+
+               PARALLELOGRAM ( loc  = (  0, 0,  100),
+                               v1   = (100, 0,    0),
+                               v2   = (  0, 0, -200),
+
+                               diff = (  0, 1, 0),
+                               pattern = CHECK
+                             )
+
+               { ** several mirrored spheres ** }
+
+               BEGIN_BBOX
+
+                   SPHERE    ( loc = (-100, 50, -50),
+                               radius = 30,
+
+                               diff   = (0, 0, 0),
+                               mirror = (.6, .9, .9),
+                               dither = 0
+                             )
+               END_BBOX
+
+               BEGIN_BBOX
+
+                   SPHERE    ( loc = (40,  0, -100),
+                               radius = 30,
+
+                               diff   = (0, 0, 0),
+                               mirror = (.9, .6, .9),
+                               dither = 0
+                             )
+               END_BBOX
+
+               BEGIN_BBOX
+
+                   SPHERE    ( loc = (50, 50, -50),
+                               radius = 30,
+
+                               diff   = (0, 0, 0),
+                               mirror = (.9, .6, .9),
+                               dither = 0
+                             )
+               END_BBOX
+
+               BEGIN_BBOX
+
+                   SPHERE    ( loc = (50, 50, -100),
+                               radius = 30,
+
+                               diff   = (0, 0, 0),
+                               mirror = (.9, .6, .9),
+                               dither = 0
+                             )
+               END_BBOX
+
+               BEGIN_BBOX
+
+                   SPHERE    ( loc = (0, 0, 0),
+                               radius = 30,
+
+                               diff   = (0, 0, 0),
+                               mirror = (.9, .9, .6),
+                               dither = 0
+                             )
+               END_BBOX
+
+           { ** An observer ** }
+
+           OBSERVER ( loc    = (40, 25, 30),
+                      lookat = (50, 0, -100)
+                    )
+
+           { ** Two lamps ** }
+
+           LAMP ( loc = (65, 70, 20),
+                  radius = 5,
+                  dist = 45
+                )
+
+           LAMP ( loc = (30, 55, -10),
+                  radius = 5,
+                  dist = 25
+                )
+
+           SKY  ( horiz  = (0, 0, .55),
+                  zenith = (0, 0, .25),
+                  dither = 4
+                )
+
+

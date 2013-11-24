@@ -1,0 +1,77 @@
+Compiling QRT using Microsoft C 5.1 under OS/2 and MS-DOS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+The enclosed file OS2F_QRT.EXE is an OS/2 Family Application version of
+the QRT program.  This means the program was compiled so it would run
+under both OS/2 and MS-DOS.   It works on all 80x86 processors and also
+takes advantage of the 80x87 math coprocessor if it is available, and
+emulates it if not. This document describes what has to be done to
+compile the program using MSC version 5.1.
+
+NOTE: I did not have the source code for the QRT2GIF program, so it has
+NOT been converted.  You must still run this program under MS-DOS.
+
+The QRT program works very well in the background under OS/2.  For
+example, you can enter the command:
+
+  DETACH QRT -xres 320 -yres 200 -aspect 1.3 < filename
+
+My IBM PS/2 model 60 with an 80287 processor calculated the TABLE image
+at this resolution in one hour, thirty seven minutes using this command.
+(with all other tasks shut down in OS/2).
+
+NOTICE: 
+The enclosed QRT source code was not modified by me in any way.
+Instead, I am including this set of instructions that tell how to
+modify the official source code.  I do not believe in modifying
+someones work and then distributing it without the permission of the
+author.
+
+
+1) File Names
+~~~~~~~~~~~~~
+  The first problem encountered was the file names.  Some of the file
+names were too long for MS-DOS's limitations of 8 characters in front
+of the decimal and 3 characters after the decimal.  Some of the files
+had to be renamed to fit the MS-DOS format.
+
+2) The Makefile
+~~~~~~~~~~~~~~~
+  I modified the existing unix makefile and created the MSC makefile. 
+There was a strange bug in the make program in that it wouldn't find
+one file (intersect.c) even after I renamed it intersec.c to fit in the
+MS-DOS file name limitations. I found if I manually compiled this file
+and then ran make, everything worked ok.
+
+  Basically all I did to the unix makefile was rename the files to
+MS-DOS compatible file names and add the MSC compiler options to link
+in the large memory model and set the stack to E000h (I just picked a
+large number when I got a stack error, it may be a way too large but it
+works).  I also changed the name of the object files from "*.o" to
+"*.obj" to match the MSC naming convention. This file is included as
+MAKEFILE.MSC in this package.  
+
+
+3) The source code
+~~~~~~~~~~~~~~~~~~
+  The program SHOULD compile with no problems under MSC 5.1.
+Unfortunately, a bug in the MSC 5.1 compiler forced me to change one
+line in the file PATTERN.C.  The file MSC_PATT.C in this package is a
+replacement for the PATTERN.C file in the official distribution.
+
+
+4) Binding the program
+~~~~~~~~~~~~~~~~~~~~~~
+After compiling the program (under OS/2) I ran the BIND program to turn
+it into a family application that will run under both OS/2 and MS-DOS. 
+
+
+5) More Information
+~~~~~~~~~~~~~~~~~~~
+For more information on the OS/2 (MSC) port, you can contact me at:
+
+Kevin Lowey
+Fidonet:   1:140/43
+Bitnet:    Lowey@Sask.Bitnet
+UUCP:      lowey@dvinci.uucp
+Internet:  Lowey@SASK.USask.CA 

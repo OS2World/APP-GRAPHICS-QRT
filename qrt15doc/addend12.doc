@@ -1,0 +1,132 @@
+
+
+
+
+
+
+        
+        
+        
+                           Addendum to QRT Version 1.2
+        
+        
+        
+        The following are changes to QRT made since version 1.1
+        
+        Additions and Enhancements
+        
+           Polygon Primitive Added to Pattern Command
+               
+               Patterns in version 1.1 could  include only rectangles and
+               circles;  a  new  polygon  command  vastly  increases  the
+               utility of the  pattern  command.   Polygons  may have any
+               number of points (at least  three),  but a large number of
+               points will increase the time 
+               taken for the  containment  test,  and  hence  the time to
+               complete the image.  A fast containment algorithm is used,
+               but it is still linear  in  the  number  of  points in the
+               polygon.  A practical limit 
+               might be 30 to 40 points (split  among all polygons in the
+               pattern).
+               
+               In order for the polygon command to operate correctly, the
+               first point must be the same as the last point.  ex:
+               
+                     PATTERN ( name    = TRIANGLE_TEST
+                               x_size  = 6
+                               y_size  = 6
+               
+                               POLYGON (
+                                 POINT = (0 , 0)
+                                 POINT = (5 , 0)
+                                 POINT = (2.5,5)
+                                 POINT = (0 , 0)  { same as 1st pt }
+               
+                                 { ** any number of additional points
+                                      could be added here ** }
+                               )
+               
+                               { ** more polygons or other pattern
+                                    primitives could come here     ** }
+                             )
+               
+               Polygon primitives may be  mixed  in a pattern with either
+               circles or rectangles.   If  a  rectangle  is desired, the
+               rectangle primitive is faster than a four point polygon.
+               
+               
+
+
+        QRT Ray Tracer               Page 1               Addendum to 1.2
+
+
+
+
+
+
+
+
+
+
+
+
+        Bug Report
+        
+           One bug found in version 1.1  has  been  fixed.  The shadowing
+           routine in version 1.1  did  not  operate  quite correctly:  a
+           point was  (incorrectly)  computed  as  being in a shadow if a
+           line drawn from the point to  the  lamp  intersected an object
+           even on the other side  of  the  lamp.   The  test should have
+           looked at objects only on  the  same  side  of the lamp as the
+           point in question.  This  was giving  extra shadows in strange
+           places, and has been fixed in this version.
+           
+           
+        Planned Extensions for 1.3
+        
+           Version 1.3 will probably  include  a  better lexical analyser
+           that can cope  with  nested  comments  and  possibly  #include
+           files.  The  #include  directive  would  enable one to amass a
+           file of often  used  patterns,  for  example.   The  parser is
+           plenty fast enough (between 2  and  3 hundred lines per second
+           from RAM:) to make this practical.
+           
+           
+        Hints, Tips, etc.
+        
+           Try using a general purpose macro processor to pre-process QRT
+           input. #define BRICK_RED  (.8,  .2,  .1),  for example, or use
+           parameter macros to  #define  CYLINDER  (height,  diameter) to
+           eliminate the need for  entering  quadratic  coefficients.  (I
+           may add CYLINDER, CONE,  and  SPHEREOID  commands  to a future
+           version of QRT.   They  would  simply  map  into  the  current
+           quadratic primitive, but make QRT easier to use).
+             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 2               Addendum to 1.2
+
+
+
+
+
+

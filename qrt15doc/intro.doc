@@ -1,0 +1,264 @@
+
+
+
+
+
+
+        
+                             Introduction to the QRT
+                                   Ray Tracer
+        
+        
+        QRT is a ray tracing  image  rendering  system  that runs under a
+        variety  of  operating  systems.   It  has  a  free  format input
+        language   with   extensive   error   detection   and   reporting
+        capabilities.
+        
+        This manual is divided into several sections as follows:
+        
+           QRT Language Reference:
+           
+               This is  a  quick  reference  guide  to  the  QRT  command
+               language.  It can suffice as a tutorial for those familiar
+               with ray tracing programs,  or  function as a guide to QRT
+               features not described in the User Manual.
+               
+           QRT User Manual:
+           
+               The User Manual is a  more  complete  tutorial  to the QRT
+               system.  It describes the  basic  commands and features of
+               QRT, without listing every possible command or option.  It
+               would be a good starting  place  for  beginners.  QRT bugs
+               and desired  enhancements  are  listed  at the end of this
+               section.
+               
+           QRT Technical Reference:
+           
+               This is a  programmer's  guide  to  the  QRT software.  It
+               describes  the  structures  used  by  QRT  and  the design
+               philosophy used in creating the system.  It should be read
+               by anyone attempting to understand or modify the code.
+               
+           QRT Error Codes
+           
+               The error code  section  explains  QRT  error  messages in
+               detail,  and   lists   solutions   or   suggestions  where
+               appropriate.
+               
+           Context Free Grammar
+           
+               This is a BNF style context  free  grammar  description of
+               the  QRT  input  language.   It  may  be  used  as a quick
+               reference for people familiar with compiler terminology.
+               
+           QRT Sample Programs
+           
+               These are actual QRT input files;  they show suggested QRT
+               indenting style and give examples of various features.
+
+
+        QRT Ray Tracer               Page 1                  Introduction
+
+
+
+
+
+
+
+
+
+
+
+
+               
+           Machine Specifics
+           
+               The QRT post processor is machine dependent.  This section
+               contains instructions on using  it, as well as information
+               on other machine dependent features.
+               
+        
+        
+        
+        
+        
+        References
+           
+           
+           
+           Howard Anton, Elementary Linear Algebra, Anton Textbooks,
+              Inc.,   1987
+           
+           
+           David F. Rogers, Procedural Elements for Computer Graphics,
+              McGraw Hill, Inc., 1985
+           
+           
+           Eric Graham, Graphic Scene Simulations, Amiga World,  CW
+              Communications/Peterborough, Inc., May/June 1987
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 2                  Introduction
+
+
+
+
+
+
+
+
+
+
+
+
+                                 Table of Contents
+           
+                                                               Page
+           
+                I. QRT Language Reference Manual
+           
+                   A. Introduction  ..........................   1
+                   B. Setup Commands .........................   3
+           
+                      1. Sky .................................   3
+                      2. Ground ..............................   4
+                      3. Focal Length ........................   5
+                      4. First Scan ..........................   5
+                      5. Last Scan ...........................   5
+                      6. File Name ...........................   6
+                      7. Observer ............................   6
+                      8. Lamp ................................   7
+           
+                   C. Primitive Types ........................   8
+           
+                      1. Sphere ..............................   8
+                      2. Parallelogram .......................   9
+                      3. Triangle ............................  10
+                      4. Ring ................................  11
+                      5. Quadratic ...........................  12
+           
+                   D. Patterned Surfaces .....................  14
+           
+                      1. Pattern .............................  14
+                      2. Rectangle ...........................  16
+                      3. Circle ..............................  17
+                      4. Polygon .............................  18
+           
+                   E. Bounding Boxes .........................  19
+           
+                      1. Begin Bbox ..........................  19
+                      2. End Bbox ............................  19
+           
+                   F. Instances ..............................  20
+           
+                      1. Begin Instances .....................  20
+                      2. End Instances .......................  21
+                      3. Instance Of .........................  22
+           
+                   G. Setting Defaults .......................  23
+           
+                      1. Default .............................  23
+               
+
+
+
+
+
+        QRT Ray Tracer               Page 3                  Introduction
+
+
+
+
+
+
+
+
+
+
+
+
+           
+                             Table of Contents - Cont.
+           
+                                                               Page
+           
+                II. QRT Users Manual
+           
+                   A. Introduction  ..........................   1
+                   B. Comparison to Other Systems ............   1
+                   C. The World ..............................   3
+                   D. Input Language .........................   4
+                   E. Illumination Model .....................   6
+                   F. Light Sources ..........................   9
+                   G. Observer ...............................  10
+                   H. Filenames ..............................  11
+                   I. Focal Length ...........................  11
+                   J. Sky and Ground .........................  12
+                   K. Bounding Boxes .........................  13
+                   L. Patterns ...............................  15
+                   M. Instances ..............................  17
+                   N. Defaults ...............................  19
+                   O. Problems, Bugs .........................  20
+                   P. Possible Enhancements ..................  21
+           
+           
+                III. QRT Technical Reference Manual
+           
+                   A. Introduction ...........................   1
+                   B. C Source file list .....................   1
+                   C. Data Structures ........................   2
+                   D. Code Description .......................   4
+           
+           
+                IV. QRT Error Codes
+           
+           
+                V.  Context Free Grammar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 4                  Introduction
+
+
+
+
+
+

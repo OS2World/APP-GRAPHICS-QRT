@@ -1,0 +1,1452 @@
+
+
+
+
+
+
+
+        
+                                QRT Users Manual
+        
+        INTRODUCTION
+           
+           QRT (Quick Ray Tracer) is  an  easy  to  use  image generation
+           system that uses a ray tracing algorithm  for image rendering.
+           Versions exist for  the  Amiga  personal  computer,  the  Data
+           General MV10000, the HP  9000  series,  and  the  IBM AT.  QRT
+           overcomes many of the problems of  other ray tracing packages,
+           and  is  designed  to   operate   nicely  in  a  multi-tasking
+           environment.
+           
+           
+        COMPARISON TO OTHER SYSTEMS
+           
+           QRT was developed on the Amiga  personal  computer, so it will
+           be compared to  other  Amiga  ray  tracers.  There  are, to my
+           knowledge, five other  Amiga  ray  tracers,  each with its own
+           strengths  and  weaknesses.    I  will  describe  each  system
+           briefly, and compare it to QRT.  All the Amiga ray tracers can
+           operate in HAM (4096 color) mode.
+           
+              RT: RT was the first ray  tracer  written for the Amiga, by
+                  Eric    Graham.  It will model  a universe made of only
+                  spheres, a   sky, and a checkered  or solid ground.  It
+                  is  relatively  fast,  but  not  generally  useful  for
+                  realistic modeling   because  of the sphere limitation.
+                  The input language  is  cryptic,  although  some  error
+                  checking is done.  The  system  will  only generate low
+                  resolution images.
+           
+             SILVER: I have never seen SILVER, so I cannot say much about
+                  this system.
+           
+             SCULPT-4D: This package  incorporates  an interactive editor
+                  for  creating  objects,   and  is  capable  of  quickly
+                  generating a preliminary  image  of  the scene by using
+                  hidden surface techniques.  However, every primitive is
+                  made of polygons, and some  primitives  such as spheres
+                  require hundreds of  polygons  for a smooth texture, so
+                  the ray tracing is very slow.   Also, the package takes
+                  a large amount of memory to run, and is prone to system
+                  crashes.  Its chief  feature  is  the ability to create
+                  arbitrary shaped objects  using  a series of triangles.
+                  Mirrored, dull, or shiny objects are supported.
+           
+             CLIGHT: This ray tracer also has  an interactive editor, but
+                  produces very poor quality  images.   It is not capable
+                  of any patterning or reflection characteristics.
+
+
+        QRT Ray Tracer               Page 1                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+           
+             DBW: This is possibly the most  complete  ray tracer for the
+                  Amiga.  It will support objects  with arbitrary degrees
+                  of reflection and gloss,  depth  of field effects, some
+                  texturing,   wavy   surfaces,   fractals,   transparent
+                  surfaces, diffuse  propagation  of light from object to
+                  object,  and  5  primitive   types  (sphere,  triangle,
+                  parallelogram, fractal, and ring).  The input language,
+                  however,   is    so    cryptic    as   to   be   nearly
+                  incomprehensible, and  if  there  is  any  error in the
+                  input file,  it  will  crash  the  system.   It is also
+                  painfully slow;  some  images  take  16  to 24 hours to
+                  complete.
+           
+           QRT is meant to be a  compromise  between the fast, simple ray
+           tracers and the slow powerful systems.   It compares favorably
+           in speed to RT, and in power  to  Sculpt-3d  or DBW.  It has a
+           very friendly input language  with  extensive  error checking.
+           Here are some features of QRT:
+           
+               o   Multiple  primitive   types,  including  user  defined
+                  quadratic       surfaces
+           
+               o  Arbitrary  levels  of   diffuse   reflection,  spectral
+                  reflection, transmission, ambient lighting, and gloss
+           
+               o  User defined pattern information for objects
+           
+               o  Bounding boxes for groups of objects
+           
+               o  Shadows
+           
+               o  Multiple light sources with different characteristics
+           
+               o  Arbitrary Phong spectral reflection coefficients
+           
+               o  Color dithering  to  increase  the  apparent  number of
+                  colors
+           
+               o  Easy to use, free  format  input  language  with  error
+                  checking.  Parameters are by  keyword and may appear in
+                  any   order.
+           
+               o  Supports medium resolution (128k dots/screen)
+           
+           Each of these features of  QRT  will  be  discussed is greater
+           detail in this document.
+           
+
+
+
+
+
+        QRT Ray Tracer               Page 2                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        THE QRT WORLD
+        
+        QRT constructs an  image  of  the  world  by  performing  certain
+        manipulations  on  an  internal  representation  of  a  group  of
+        objects.  You must provide a description  of these objects to QRT
+        through the QRT input language.
+        
+        QRT writes a machine independent bitmap file which can be read by 
+        a computer specific post  processor.   The  post processor either
+        displays the  image  or  converts  it  into  the  proper form for
+        display  by  system   programs.     (See  the  Machine  Dependent
+        Information section of this manual for details).
+        
+        QRT is capable of dealing  with  5  types  of  primitive objects:
+        spheres,   parallelograms,   triangles,   rings   (annulus),  and
+        quadratic  surfaces.   The  latter  can  be  used to model cones,
+        oblong spheroids, and other interesting  surfaces.  Each of these
+        objects can have an arbitrary orientation in space, and arbitrary
+        surface characteristics.
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 3                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT INPUT LANGUAGE
+           
+           The QRT input language is free format, in that commands may be
+           placed anywhere on a line, and  newlines  may be placed at any
+           point.  This makes it easy to  use  indentation.  Comments are
+           also supported by surrounding  text  with curly braces '{' and
+           '}'. Comments may span lines.
+           
+           Once a file with QRT commands  is  built  (using any available
+           text editor), qrt can be made to process these commands:
+           
+               QRT <commands.qrt
+           
+           where "commands.qrt" is the  file  containing  the input.  QRT
+           also produces  some  statistics,  so  this  output can also be
+           redirected. Since QRT runs for a  long time, you will probably
+           want to run it as a background task  with a low priority.  So,
+           the full set of commands to run QRT would be:
+           
+               SetTaskPriority -5
+               run QRT <commands.qrt >qrt.out
+               SetTaskPriority 0
+           
+           This set of commands is  specific  to the Commodore Amiga; see
+           the Machine Dependent  Information  section  of the manual for
+           other operating systems.
+           
+           QRT will write a very large  file,  which may be anywhere from
+           400K 
+           to 4 megabytes depending  on  the  specific  computer  display
+           resolution.  (See the Machine Dependent Information section of
+           this manual for the  exact  file  size).   There  should be at
+           least enough room on your  disk  to  accommodate this file.  I
+           recommend  sending  the  output  to  a  RAM  disk, so that the
+           physical disk does  not  get  used  for  60  minutes while QRT
+           computes the image.
+           
+           A typical QRT command  to  create  a  sphere using the default
+           surface attributes would, be:
+           
+               SPHERE ( loc = (5,10,100)     { this is a white sphere }
+                        radius = 12.5
+                      )
+           
+           For comparison, the sphere command for DBW looks like this:
+           
+               s 0 0 0 1 0 0 0 .2 .2 .2 .8 .8 .8 5 10 100 12.5
+           
+           Or, in RT, the command would be:
+           
+               <1,1,1> 2 (5,10,100):1;
+
+
+        QRT Ray Tracer               Page 4                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+           
+           The QRT input should be  much  easier  to  understand.  If QRT
+           sees an error in its input  file,  it  will stop and print the
+           line number of the offending  line,  along  with a descriptive
+           error message (ILLEGAL PARAMETER, etc).
+           
+           The  QRT  input  language  is  not  case  sensitive.   A  full
+           description of  the  language  and  a  shorter,  context  free
+           grammar can be found elsewhere in this manual.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 5                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        THE QRT ILLUMINATION MODEL
+           
+           Before meaningful images can be  created, the QRT illumination
+           model must be understood.  The light that reaches the observer
+           from each object is composed of several components:
+           
+              o Diffuse light       - The "color" of the object
+           
+              o Ambient light       - The  color  of the light that falls
+                                      on                              the
+                                      surface of the  object  if no lamps
+                                      are shining  on  this  spot.   Note
+                                      that this  specifies  the  color of
+                                      light, not the color  of the object
+                                      itself.
+           
+              o Reflected light     -  If  the  object  acts as a mirror,
+                                      some  light is reflected.
+           
+              o Specular highlights  -  The  "bright  spots"  of  a shiny
+                                      object viewed in a light.
+           
+              o Transmitted light   - The object may transmit some of the
+                                      light that strikes  the back of the
+                                      object (glass surfaces)
+           
+           All of these light  characteristics  can  be specified for any
+           object.  If  none  are  specified,  the  current  defaults are
+           assumed.  These  defaults  can  be  changed  (see  DEFAULT  in
+           Language Reference Guide).
+           
+           Most of these light characteristics  deal with a percentage of
+           light.  For example, a light may  reflect 80% of the red light
+           that strikes it, 20% of the green,  and 40% of the blue.  This
+           is the "color" of the  object  (diffuse  light),  and would be
+           specified in QRT by the following syntax:
+           
+                         diff = (.80, .20, .40)
+           
+           In QRT, 1.00 is 100%.  The  language  is  also free-format, so
+           the above is equivalent to:
+           
+                         diff = (.80,
+                                 .20,
+                                 .40 )
+           
+           The commas between parameters are optional, but make the input
+           easier to read.  Semicolons can also be used.
+           
+           Ambient light is specified in a similar manner:
+           
+
+
+        QRT Ray Tracer               Page 6                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+                         amb = (.20, .20, .20)
+           
+           The ambient light values should  be fairly small.  Most of the
+           light hitting the object comes  from  lamps, but some parts of
+           the object may be in  the  shadow  of  another  object.  If no
+           ambient light is specified, these  shadows will appear totally
+           black, which looks  unrealistic.   Ambient light will give the
+           affect of a small amount of  light  hitting areas in a shadow,
+           producing a more realistic looking image.
+           
+           Reflection is specified using the MIRROR attribute:
+           
+                         mirror = (.90, .90, .90)
+           
+           If a true  mirrored  surface  is  desired,  the  mirror values
+           should be fairly high.   If  one  of  the  values has a higher
+           value than the others, the  mirror  will appear red, green, or
+           blue.
+           
+           Transmission is specified as follows:
+           
+                         trans   = (.80, .80, .80)
+                         density = (.022, .022, .022)
+                         index = 1.33
+           
+           Note  the  addition  of   another   parameter,  the  index  of
+           refraction. An explanation of  the  index of refraction for an
+           object is beyond the scope of  this  document  - see a book on
+           elementary optics for details.   The density factor is a light
+           attenuation factor per unit distance the light travels through
+           the object.  The trans  parameter  tells QRT how much light to
+           remove from shadows cast by 
+           this object.
+           
+           In  addition,  specular  highlights  are  specified  with  two
+           parameters:
+           
+                         reflect  = .50,
+                         sreflect = 45
+           
+           "REFLECT" is the percentage of light reflected in the specular
+           highlight, and  sreflect  is  the  Phong  spectral  reflection
+           coefficient.  Again, an  explanation  of the Phong coefficient
+           is beyond the scope of this document;  however, a higher value
+           for the coefficient will result in smaller, tighter highlights
+           for a more metallic looking object.   Lower values of sreflect
+           should be accompanied  by  lower  values  in reflect, and will
+           produce duller looking surfaces, such as paper.
+           
+           QRT also accepts a dithering amount for each object:
+           
+
+
+        QRT Ray Tracer               Page 7                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+                         dither = 3
+           
+           Dithering is a mechanism for  simulating  colors not available
+           on  the  display  by  blending   other  colors.   The  default
+           dithering coefficient is 3; it  should  be kept small.  Values
+           of 1 to  6  are  good.   Larger  objects  should  employ  more
+           dithering, and mirrored or glass objects should have little or
+           no dithering.
+           
+           QRT also accepts an attribute "FUZZ",  but this is not used in
+           the present  implementation.   In  a  future implementation of
+           QRT, FUZZ will  effect  small,  random  perturbations  of  the
+           normal vector at a  given  location  on  an object.  This will
+           simulate  rough  surfaces,   matted   glass,   or  imperfectly
+           reflecting mirrors.
+           
+           All of the above light characteristics  may be attached to any
+           object.  The default  is  for  a  white,  non  reflecting, non
+           transmitting dull surface with an average amount of dithering.
+           In addition, any of the above color information (which will be
+           referred to from now on as COLORINFO)  may also be attached to
+           a  pattern  structure   (see   the  PATTERN  section  of  this
+           document).
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 8                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        LIGHT SOURCES
+           
+           Light sources in QRT are  called  "LAMPS".  The lamp structure
+           is simple:
+           
+                        LAMP ( loc = (12, 34, 56),
+                               dist = 50,
+                               radius = 10 )
+           
+           The default is for a  bright  white  lamp,  but if you wish to
+           change this, you can specify  different  values for the lamp's
+           ambient  light.    The   radius   value  is  ignored  by  this
+           implementation of QRT, but it  must  be supplied.  In a future
+           version,  the  radius  may  be  used  to  implement  penumbral
+           shadows.  I didn't include  them  in  this version, since they
+           take a very long time to  compute,  and  don't add much to the
+           image quality.
+           
+           The "dist" entry in  the  lamp  structure  specifies  at  what
+           distance the light from the lamp is at full intensity.  Beyond
+           this value, the light will decrease  in intensity.  This value
+           should be set so  that  the  nearest  object  in  the scene is
+           slightly more than "dist" distance  units from the lamp.  This
+           does not have to be exact. If  objects  are  nearer than dist"
+           units, they will  be  so  bright  that  shading  will not take
+           place. Objects very far away will be dimly illuminated.
+           
+           By the way, QRT distance units are  not tied to any real world
+           unit.  They can stand for  feet,  nautical miles, or furlongs,
+           at your choice.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 9                   User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        THE OBSERVER
+           
+           After defining the world, you  must  tell QRT the position and
+           orientation of the observer.  This is done as follows:
+           
+                    OBSERVER ( loc     = (0, 10,  20),
+                               lookat  = (5,  5, 120),
+                               up      = (0,  1,   0)
+                             )
+           
+           The x,y, and z are the location of the observer.  The "lookat"
+           variables give  a  location  in  space  that  the  observer is
+           looking at.  Most ray tracers  require  you to give two angles
+           for the observers  view  direction,  but  it is MUCH easier to
+           know the location of an object or  point in space you wish the
+           observer to look at.  This will be the center of your scene.
+           
+           The "up" variables define which direction is up.  Usually, you
+           will wish to use the  values  given  above.   QRT uses a right
+           hand coordinate system: positive y is up, positive z is out of
+           the screen, and positive x is to  the right if you are looking
+           in the negative z direction.  The  "up" parameter is optional,
+           and if omitted, defaults to (0,1,0).
+           
+           QRT will generate an error message if no observer is defined.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 10                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        OUTPUT FILENAME
+           
+           QRT places its output in a file,  so you must give it the name
+           of this file:
+           
+                         FILE_NAME = outfile.tmp
+           
+           This file must observe  any  file  naming  restrictions of the
+           operating system and computer you  are using.  See the Machine
+           Dependent Information section  of  this manual for information
+           on file naming restrictions.
+           
+           
+           
+        FOCAL LENGTH
+           
+           This is the focal length of  the  "lens" used by the observer.
+           Think of it as a 35mm camera  lens  - higher numbers produce a
+           telephoto  effect,  and  smaller  numbers  are  for wide angle
+           lenses. Note that small numbers may produce some distortion of
+           the  image around the edges.
+           
+                         FOC_LENGTH = 60
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 11                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        SKY AND GROUND
+           
+           QRT has facilities  for  generating  the  sky  and ground.  To
+           define the sky, you must give it  two colors - one for the sky
+           overhead (zenith), and one for the horizon:
+           
+                         SKY ( zenith  = (.10, .2, .4),
+                               horiz   = (.10, .2, .65),
+                               dither   = 6
+                         )
+           
+           This will produce a blue sky,  with  a brighter color near the
+           horizon.  (The sky need not be  blue  - it could be red or hot
+           pink, or vary from red to green).  QRT will smoothly blend the
+           colors from the zenith to the  horizon.   Since  the sky is so
+           large, you may want to specify  a  greater amount of dithering
+           to compensate for the displays color resolution limit.
+           
+           The SKY structure  will  also  produce  sky  colors  below the
+           horizon; any ray that does  not  strike  an object will strike
+           the SKY.  To fix this, define a ground.  There is no dedicated
+           GROUND   command,   since   you   can   define  a  very  large
+           parallelogram with the  same  effect.   You  can make it brown
+           with patches of green using a PATTERN,  or checkered green and
+           yellow in the  classic  ray-tracing  ground  pattern.   A very
+           large sphere can also be  used  for  the  ground, which yields
+           better results with mirrored objects.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 12                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        BOUNDING BOXES
+           
+           QRT supports the  use  of  bounding  boxes  to  speed  the ray
+           tracing process.  For images  composed  of only a few (1 to 3)
+           objects, bounding boxes will  not  do  much to increase speed.
+           However,  for  images  where   there  are  groups  of  objects
+           physically close  to  each  other,  they  can  greatly  reduce
+           execution times.  A  bounding  box  is  a conceptual structure
+           that encloses a group  of  objects.   When  the  ray tracer is
+           finding line/object intersections, if a line does not strike a
+           bounding box, it  cannot  possibly  strike  any objects within
+           that bounding box.  This saves  the  ray tracer the trouble of
+           checking intersections with  all  objects  within the box.  In
+           the case where the ray  DOES  enter  the  box, some additional
+           overhead is incurred; however,  this  cost is easily justified
+           by reduced times for negative tests.
+           
+           Bounding boxes can occasionally be useful for complex objects,
+           such as quadratic surfaces,  when  the object is fairly small.
+           Since the time to  find  the  intersection  with  a  quadratic
+           surface is large, but bounding box intersections are fast, the
+           ray tracer can save time for all the negative tests.
+           
+           Bounding  boxes  can  contain   other  bounding  boxes,  in  a
+           recursive manner.  This recursive structure defines an "object
+           tree". There are two keywords  that  define  the beginning and
+           end of a bounding box:  BEGIN_BBOX  and  END_BBOX.  Here is an
+           example:
+           
+           
+               { ** QRT Code for a chessman ** }
+           
+               BEGIN_BBOX
+           
+                   QUADRATIC (  { ** quadr defn ** }
+                             )
+           
+                   QUADRATIC (  { ** quadr defn 2 ** }
+                             )
+           
+                   SPHERE    (  { ** sphere defn ** }
+                             )
+           
+                   BEGIN_BBOX
+           
+                       SPHERE ( )    { ** two spheres ** }
+                       SPHERE ( )
+           
+                   END_BBOX
+           
+               END_BBOX
+
+
+        QRT Ray Tracer               Page 13                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+           
+           This structure may be nested to an arbitrary level; if you had
+           a closely spaced group of  chessmen,  you could enclose all of
+           them with a bounding box.
+           
+           There is no simple  algorithm  for  knowing  exactly  where to
+           place  bounding  boxes.    You   have  to  use  common  sense.
+           Typically, bounding boxes do the  most good for closely spaced
+           objects, but if the  entire  group  of  objects is less than a
+           third of the image area, it will be useful to enclose them all
+           in a bounding box.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 14                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        PATTERNS
+           
+           QRT permits user defined  patterns  which can be mapped to the
+           surface of any object.  A  pattern  is  basically an organized
+           method for changing an object's  COLORINFO over the surface of
+           that object.  For example, a checkered surface can be created,
+           or a surface  given  the  appearance  of  brick  or tile.  The
+           current patterning in QRT is  limited,  yet powerful enough to
+           describe many common patterns.
+           
+           A pattern is composed  of  a  series  of  sub-patterns.   Each
+           sub-pattern defines a region on the surface of an object which
+           will contain a given  COLORINFO.   These regions are presently
+           limited to rectangles, but  this  may  be expanded in a future
+           implementation of QRT.
+           
+           A pattern can be defined once, and used for many objects.  For
+           example, a brick pattern might be defined:
+           
+           
+                     PATTERN ( name = BRICK,
+                               { ** other pattern info here ** }
+                             )
+           
+                     SPHERE  ( { ** sphere definition ** }
+                               pattern = BRICK
+                             )
+           
+                     PARALLELOGRAM ( { ** parallelogram definition ** }
+                                     pattern = BRICK
+                                   )
+           
+           This  example  ignores   what   is  actually  in  the  pattern
+           definition  to  demonstrate   how  patterns  are  attached  to
+           objects.  A pattern must be defined before it can be used.  It
+           is given a name, such  as  BRICK,  and  any object can specify
+           this pattern with "PATTERN =  BRICK".   There are no practical
+           restrictions on the length of pattern  names (if your computer
+           has 1 megabyte of ram, you  cannot  have a pattern name longer
+           than 1 million characters).  Multiple  patterns may be defined
+           at the top of an input file,  and  used  for any object in the
+           file.
+           
+           What exactly makes up a  pattern,  you  ask?  A pattern can be
+           viewed as a rectangle that is repeated  over the surface of an
+           object.  If the  pattern  size  is  10  x  10, and you have an
+           object (say a parallelogram) that is 50 x 50, the pattern will
+           repeat 5 times  in  each  direction.   Within  this  repeating
+           rectangle, sub patterns can  be  defined.   A sub-pattern is a
+           rectangle or  circle  within  the  pattern  rectangle  with  a
+           certain COLORINFO. Any  number  of  these  sub-patterns can be
+
+
+        QRT Ray Tracer               Page 15                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+           created within one pattern definition. To create a brick wall,
+           you might define several  sub-patterns,  each  with a slightly
+           different color of red or  brown.   The  sub patterns need not
+           cover the  entire  pattern  rectangle;  if  they  do  not, the
+           COLORINFO you defined for the  object  is  used instead of the
+           pattern COLORINFO.  If you  defined  sub-patterns  for bricks,
+           the  area  not  covered  would  be  mortar,  and  the  objects
+           COLORINFO would define  the  color  of  the  mortar. An actual
+           brick pattern is  given  in  appendix  C.   The  proper use of
+           patterns can be very effective in  producing realistic looking
+           scenes.   However,   complicated   patterns  will  slow  image
+           creation, so it  is  recommended  that  you first display test
+           scenes with no patterns, and then add pattern information when
+           the scene is right.
+           
+           Patterns have one other use, in the REMOVE command.  A pattern
+           can be defined and thought  of  as  a  cut out from a surface.
+           For example, suppose you wish  to  make  a flat surface in the
+           shape of a grand piano top.   Rather  than  creating the piano
+           top out of many parallelograms and triangles, define a pattern
+           that includes 
+           everything in a parallelogram  but  NOT in the piano top; that
+           is, the pattern maps the area to remove, not the area to keep.
+           Attach this  pattern  to  a  planar  object  with  the  REMOVE
+           command.   In  this  case,  since  the  area  is  removed, any
+           associated COLORINFO is ignored.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 16                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        INSTANCES
+           
+           Often, several copies of  a  complex  object  must be created.
+           Specifying  their  component  primitives  each  time  would be
+           difficult.  There  is  a  solution  to  both  these  problems:
+           INSTANCES.   An  INSTANCE   is   a  method  by  which  several
+           primitives (actually, an arbitrary object tree) can be grouped
+           and given a name.   Copies  of  these  objects  may  be easily
+           created with one command.   Here  is an example of an instance
+           definition.
+           
+                   BEGIN_INSTANCES
+           
+                       NAME = object1
+                       BEGIN_BBOX
+                           { ** a bunch of primitives here ** }
+                       END_BBOX
+           
+                       NAME = object2
+                       BEGIN_BBOX
+                           { ** a bunch more primitives  here ** }
+           
+                           NAME = spheres
+                           BEGIN_BBOX
+                             SPHERE ( )  { ** two sphere definitions ** }
+                             SPHERE ( )
+                           END_BBOX
+           
+                       END_BBOX
+           
+                   END_INSTANCES
+           
+           There can be only one of  these  instance  definitions, and it
+           must appear  before  any  instances  are  used.   However, any
+           arbitrary object tree can appear within the begin/end instance
+           statements. Several instances are  now available for use.  For
+           example:
+           
+                   INSTANCE_OF (  name = object1,
+                                  loc  = (100, 10, 20),
+                               )
+           
+                   INSTANCE_OF (  name = spheres,
+                                  loc  = (12.3, 24.5, 999)
+                               )
+           
+           This example shows  that  any  named  portion  of  the  object
+           subtree can function as an  instance  (the "spheres" object is
+           at a lower level than  the  "object1'  object).   The "offset"
+           parameters are required.  They specify  a new position for the
+           instance (offset from the origin).  In the instance definition
+
+
+        QRT Ray Tracer               Page 17                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+           segment, all objects are defined  relative to 0,0,0.  They can
+           then be moved in  the  INSTANCE_OF  statement  with the offset
+           command.
+           
+           In addition, the instance can be given a new size:
+           
+                   INSTANCE_OF (  name    = object2,
+           
+                                  loc     = (200, 100, 50),
+                                  scale   = (1.5, 2.0, .25)
+                               )
+           
+           The scale factors are  optional,  and are given the default of
+           1. The instance will  be  resized  by  the indicated amount in
+           each of the directions.  Note that there are some restrictions
+           to this: if spheres are given a different scale factor in each
+           direction, they will remain  spheres  (not change to QUADRATIC
+           types).  The new radius will  be  the old radius scaled by the
+           smallest of the scale factors.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 18                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        DEFAULTS
+           
+           Each object in QRT is  given  certain  default  surface  light
+           characteristics (see the section  on surface characteristics).
+           If these defaults are not  suitable,  they can be changed with
+           the DEFAULT command:
+           
+                   DEFAULT ( diff = (1.00, .1, .1)
+                             no_shadow )
+           
+           This  will  make  all  future  objects  red  unless  specified
+           otherwise. More than  one  default  command  can  be used in a
+           file: each one affects all the  objects  created after it, but
+           before the next default  command.   Any  light characteristics
+           can be changed (MIRROR, DITHER, etc).
+           
+           In addition,  the  keyword  "no_shadow"  can  be  included (as
+           above). Ordinarily, QRT  computes  shadow  information for all
+           objects. This takes a  lot  of  time,  especially  for  scenes
+           composed of many objects  and  many  lamps.   The  "no_shadow"
+           command causes QRT to bypass  the  shadow routines.  This will
+           result in a much faster image generation time, but the picture
+           will not look as realistic.
+           
+           X and Y screen resolution and aspect ratio can also be changed
+           with this command.  If  you  wish  to  generate  a preliminary
+           image in a smaller resolution,  say,  127 x 127, you would use
+           the following default:
+           
+                   DEFAULT ( x_res  = 127,
+                             y_res  = 127,
+                             aspect = .56
+                           )
+           
+           The aspect ratio of .56 is correct for the Amiga in 4096 color
+           mode; use 1.0 for high resolution mode.
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 19                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        PROBLEMS WITH QRT
+           
+           There are several limitations in this version of QRT:
+           
+               o Patterning  does  not  work  well  with  some  quadratic
+                  surfaces.  This is a problem  with the 3d to 2d mapping
+                  function used for quadratics.
+           
+               o  User defined texturing is not implemented - all objects
+                  in  QRT appear smooth.  I have some ideas on how to add
+                  textures to objects, but these have not been tested and
+                  are not incorporated into this version of QRT.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 20                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+        FUTURE ENHANCEMENTS TO QRT
+           
+           The following are some things I'd like to add to QRT:
+           
+               o  Enhanced  patterning  capability.  The  ability  to use
+                  enumerated (bit-mapped)  patterns  as  well as analytic
+                  patterns would be useful.
+           
+               o  Anti-dithering  routines.   These  routines   are  very
+                  computationally  expensive  (they  can  increase  image
+                  generation times by a  factor  of 3 to 5), so they were
+                  not included in this version.
+           
+               o  Penumbral shadows.  This is  also  very computationally
+                  expensive for a  minimal  utility  level,  so  I didn't
+                  bother to include this feature.
+           
+               o     Fractal    generation.      Fractals   are,   again,
+                  computationally  expensive,  but  some  things, such as
+                  mountains, cannot  be  modeled  with  a  ray tracer any
+                  other way.
+           
+               o  Wavy surfaces.  This  is  useful  for  modeling  water,
+                  rippled mirrors, etc.   I  know  how  to  do it, I just
+                  didn't have time to add it  yet.   It  would be nice if
+                  the waves were user definable  in amplitude and x and y
+                  wavelength.    Wavy   surfaces   are  very  similar  in
+                  implementation to textures.
+           
+               o  Snowy surfaces.  This is an  idea  from DBW, which adds
+                  snow to a surface depending on its slope and altitude.
+           
+               o  Interpolated normal  surfaces.   This is a mechanism to
+                  model arbitrary curved  surfaces  by  using a polygonal
+                  approximation to  the  surface,  and  interpolating the
+                  normal vector between surfaces to avoid angular looking
+                  surfaces.
+           
+               o  Image plane object  lists.    This  is  a technique for
+                  increasing   the   speed   for   positive   line/object
+                  intersection test.  (Bounding  boxes increase speed for
+                  negative line/object intersection tests). 
+           
+               o  Heuristics for faster  completion  of images using area
+                  coherence.
+           
+               o  An interactive  editor.   This  is  another large scale
+                  project in itself, and I can't forsee having time to do
+                  it for a long time, but it would be useful.  The editor
+                  would display  a  preliminary  image  of the scene, and
+                  when the user had placed  objects  to his satisfaction,
+
+
+        QRT Ray Tracer               Page 21                  User Manual
+
+
+
+
+
+
+
+
+
+
+
+
+                  it would write  a  QRT  input  file  and  call QRT as a
+                  background task.  There are certain problems here - for
+                  instance, how do you quickly  generate the outline of a
+                  user defined quadratic that can  take many forms (cone,
+                  spheroid, etc)?  And how  can  the  user easily specify
+                  the object tree  structure  (bounding  boxes)  with  an
+                  interactive editor?
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 22                  User Manual
+
+
+
+
+
+

@@ -13,7 +13,7 @@ COMPILE TOOLS
 
 AUTHORS
 ===============
-* Steve Koren
+* Port: Kevin Lowey
 
 LINKS
 ===============

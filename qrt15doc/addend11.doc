@@ -1,0 +1,66 @@
+
+
+
+
+
+
+        
+        
+        
+                           Addendum to QRT Version 1.1
+        
+        
+        
+        
+        The  following  are  changes  and  additions  to  QRT  which were
+        implemented after the manual was written.
+        
+        
+        
+        Additions and Enhancements
+        
+           Pattern Resizing
+               
+               Patterns can now be resized.  If a pattern is defined with
+               a size of 10 x 10, it  can  be  made  bigger or smaller on
+               each object to which it is  attached.   This capability is
+               not listed in the Language Reference Guide.
+               
+               Anywhere the keyword  PATTERN  appears  within a primitive
+               definition, two other parameters can be attached:
+               
+                    xmult = p
+                    ymult = p
+               
+               where p is a positive  floating  point  number.  This is a
+               scale factor; for  example,  '2'  would  make  the pattern
+               twice as big, and   '.25'  would  reduce it by a factor of
+               4.  The x and y sizing parameters need not be the same.
+               
+               
+        Bugs in Version 1.1
+        
+           Transparent Objects
+           
+               Object transparency  does  not  work  correctly in version
+               1.1.  This bug is localized to a small section of code and
+               will be fixed in a future version.   QRT still accepts the
+               TRANS parameter, but it should not be used.
+               
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 1               Addendum to 1.1
+
+
+
+
+
+

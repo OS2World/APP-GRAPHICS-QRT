@@ -1,0 +1,198 @@
+
+
+
+
+
+
+        
+                                 QRT ERROR CODES
+        
+        
+        
+        Illegal Parameter
+           
+           This error code no longer used.  See Undefined Parameter.
+           
+           
+        Too Few Parameters
+           
+           All the required parameters  were  not specified.  See the QRT
+           Language  Reference Guide for a list of required parameters to
+           this command.  This error  message  also  appears if a command
+           line option with no argument is passed to QRT.
+           
+           
+        Illegal Object Type
+           
+           QRT does not understand this primitive type.
+           
+           
+        Malloc Failure
+           
+           QRT was unable to allocate  enough  memory.  Either reduce the
+           object tree size, or run QRT on a machine with more memory.
+           
+           
+        Syntax Error
+           
+           Improper QRT syntax, such  as  a  BEGIN_BBOX  with no matching
+           END_BBOX.
+           
+           
+        Internal Error
+           
+           (May  be 'Programmer Confusion Error'  on some versions). This
+           error should never occur.  If  it  does,  either there is some
+           illegal value not caught  during  input parsing, or there is a
+           programming error in the QRT system.
+           
+           
+        File Error
+           
+           QRT couldn't open or close  the  output  file.  Check that the
+           file name adheres  to  the  naming  convention  used  for your
+           computer.
+           
+           
+
+
+
+        QRT Ray Tracer               Page 1                   Error Codes
+
+
+
+
+
+
+
+
+
+
+
+
+        Pattern not found
+           
+           A pattern was attached to a  primitive,  but  this pattern was
+           never defined.
+           
+           
+        Pattern already defined
+           
+           Two patterns were defined with the same name.
+           
+           
+        No observer defined
+           
+           No observer was defined to QRT.
+           
+           
+        Undefined parameter
+           
+           QRT does not recognize this parameter  type.  Either it is not
+           legal, or not legal in this context.
+           
+           
+        World contains non-homogeneous object
+           
+           Error code not supported by this version of QRT.
+           
+           
+        An index of refraction is 0
+           
+           An object that is transparent has an index of refraction equal
+           to zero.
+           
+           
+        Illegal color_info value
+           
+           An object surface characteristic  was defined improperly. Most
+           take values in the range 0.00 to 1.00.
+           
+           
+        Parameter should be >= 0
+           
+           This parameter only takes values greater than zero, but it was
+           given a value less than zero.
+           
+           
+        Zero multiplier
+           
+           A pattern size multiplier is zero.  Use only positive values.
+           
+           
+
+
+
+        QRT Ray Tracer               Page 2                   Error Codes
+
+
+
+
+
+
+
+
+
+
+
+
+        Undefined name
+           
+           An INSTANCE_OF primitive attempted  to use a name that was not
+           defined in the instance definition tree.
+           
+           
+        Left paren expected
+           
+           There should be a left parenthesis on this line.
+           
+           
+        Right paren expected
+           
+           There should be a right parenthesis on this line.
+           
+           
+        Illegal vector structure
+           
+           A  position  or  direction  vector  of  the  form  (x,y,z) was
+           specified improperly.
+           
+           
+        Illegal color triple
+           
+           A color triple of the form (r,g,b) was specified improperly.
+           
+           
+        Illegal command line argument
+           An illegal  command  line  option  was  specified.   The legal
+           command line options are:  -xres, -yres, -aspect, and -foclen.
+           The first two take integer arguments; the others take floating
+           point arguments.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 3                   Error Codes
+
+
+
+
+
+

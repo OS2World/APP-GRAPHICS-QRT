@@ -1,0 +1,396 @@
+
+
+
+
+
+
+        
+                        QRT Machine Specific Instructions
+        
+        
+        The QRT ray  tracer  is  designed  to  run  on  any computer with
+        sufficient  graphics  capabilities.   The  machine  should have a
+        resolution of at least 128K  dots/screen,  and be able to display
+        color graphics.  At least 256 simultaneous  colors are needed for
+        acceptable  images;  however,  it  may  be  possible  to  display
+        rudimentary images with as little as 64 colors.
+        
+        The QRT program itself is the same across computers; only the QRT
+        post processor differs.  QRT computes the image internally with a
+        much higher color resolution than most computers have (16 million
+        simultaneous colors), and the  post  processor maps this image to
+        the  available  palette.  This  document  describes  the  machine
+        dependent details of the post processor.
+        
+        On most computers the following naming convention is recommended:
+        
+                                                               
+             File                  Suffix              Example      
+        
+          QRT input                .QRT                IMAGE.QRT
+          QRT text output          .OUT                IMAGE.OUT
+          QRT bitmap output        .RAW                IMAGE.RAW
+          QRTpost converted file   .PIC                IMAGE.PIC
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 1             Machine Specifics
+
+
+
+
+
+
+
+
+
+
+
+
+        Commodore Amiga
+           
+           QRT was designed and written  on  the Commodore Amiga.  Unlike
+           many machines, the Amiga  has  a  very  standard graphics file
+           format which nearly any graphics  program can read.  Two steps
+           are necessary to transform the QRT output file to the graphics
+           file format (IFF/HAM).  First, the  QRT post processor is run.
+           Second,  a  separate   program   (RAY2)  compresses  the  post
+           processor output into  IFF  file  format  for viewing with any
+           "iff-show" type program.
+           
+           QRT can be run in the  background  on the Amiga.  It should be
+           run  with a low task priority  so  that  it will not interfere
+           with normal operation of the computer.   At least one megabyte
+           is recommended, and the QRT  output  file  should be sent to a
+           RAM disk or hard drive.  It is possible to send it to a floppy
+           disk, but  the  disk  will  constantly  be  accessed  for  the
+           duration of the  image  creation  time.   It  will probably be
+           necessary to increase the default  process stack size with the
+           STACK command.  A stack size of  40K or more is recommended to
+           avoid stack overflow errors;  however,  some images require as
+           much as 80k of stack space.
+           
+           Color Resolution:
+           
+              4096 colors from palette of 4096
+           
+           QRT Output File Size
+           
+              Approx. 400K bytes
+           
+           Commands to run QRT
+           
+              SetTaskPriority -5
+              run QRT <IMAGE.QRT >IMAGE.OUT
+              SetTaskPriority 0
+           
+           Commands to run QRTPost
+           
+              QRTPost IMAGE.RAW IMAGE.TMP
+              RAY2 IMAGE.TMP
+           
+           File Naming Restrictions
+           
+              Length <= 63 Characters
+           
+              May include special symbols: ex. '_', '#', etc.
+           
+              Although the operating system  supports  imbedded spaces in
+           files, neither QRT nor QRTPost does.
+           
+
+
+        QRT Ray Tracer               Page 2             Machine Specifics
+
+
+
+
+
+
+
+
+
+
+
+
+        Data General MV10000
+           
+           The Data General DG1000 terminal  has a high display and color
+           resolution, so the resulting  QRT  output  file is large.  QRT
+           should  be  run  in  the  background  on  this  machine.   The
+           resulting picture file may be displayed  with the DISP program
+           (G. Radack).
+           
+           Although the Data General is capable of a resolution of 1280 x
+           1024, there have  been  problems  allocating  this much memory
+           with the DISP program.  Therefore,  the DG version of QRT will
+           not use the entire display.  The  largest possible bitmap file
+           size has not yet been determined.
+           
+           Color Resolution:
+           
+              256 colors from palette of 16 Million
+           
+           QRT Output File Size
+           
+              Approx. 4 Megabytes at full resolution (1280 x 1024)
+           
+           Commands to run QRT
+           
+              QRT <IMAGE.QRT >IMAGE.OUT &
+           
+           Commands to run Post Processor
+           
+              QRTPost IMAGE.RAW IMAGE.PIC
+              disp IMAGE.PIC
+           
+           File Naming Restrictions
+           
+              Length <= 31 characters
+           
+              May include special symbols, but not imbedded spaces
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 3             Machine Specifics
+
+
+
+
+
+
+
+
+
+
+
+
+        IBM PC or AT with EGA Graphics
+           
+           The IBM is capable of a  relatively  high  display resolution,
+           although the color palette is quite limited.  The machine does
+           not permit background tasks,  so  the ray tracer should be run
+           when the machine may be left unoccupied  for a long time.  The
+           output should be sent to a hard disk or extended memory drive.
+           
+           The IBM version  of  QRTPost  is  not  yet  complete as of the
+           writing of this document.  The  QRT  program itself is working
+           on the IBM, but it should be run  on an IBM with at least an 8
+           mHz 80286 and floating point co-processor. (Otherwise, it will
+           take nearly forever).  A 386 would be better yet.
+           
+           Color Resolution:
+           
+              64 colors from palette of 64
+           
+           QRT Output File Size
+           
+              Approx. 800K
+           
+           Commands to run QRT
+           
+              QRT <IMAGE.QRT >IMAGE.OUT
+           
+           Commands to run Post Processor
+           
+              QRTPost IMAGE.RAW IMAGE.PIC
+           
+           File Naming Restrictions
+           
+              Length <= 8 characters with 3 character extension
+           
+              No special characters may be included
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 4             Machine Specifics
+
+
+
+
+
+
+
+
+
+
+
+
+        Hewlett Packard 9000 Series
+           
+           The HP 9000's are a series of technical workstations with high
+           resolution (up to 1280x1024) display resolution.  They come in
+           two   architectures:    Motorola   680x0   or   HP   Precision
+           Architecture.
+           
+           QRT has been tested on the following machine types:
+           
+              320 - (16 mhz 68020 + 68881)
+              360 - (25 mhz 68020 + 68881)
+              370 - (33 mhz 68030 + 68882)
+           
+              835 - (HP Precision Architecture)
+           
+           (The 835 is *fast* - it can run  320 x 400 images in less than
+           3 and a half minutes for most  images,  and  less than 1 and a
+           half for simple ones, where it takes my poor 68000 based Amiga
+           4 hours,   and  30  minutes,  respectively).   The  370  is no
+           slowpoke  either.
+           
+           Color Resolution:
+           
+              (depends on display card)
+              Up to 16 million colors from the same size palette.
+           
+           QRT Output File Size
+           
+              Huge.  It depends on the resolution.
+           
+           Commands to run QRT
+           
+              nice QRT <IMAGE.QRT >IMAGE.OUT &
+           
+           Commands to run Post Processor
+           
+              qrt2gif IMAGE.RAW
+           
+           File Naming Restrictions
+           
+              Length <= 256 characters
+           
+           
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 5             Machine Specifics
+
+
+
+
+
+
+
+
+
+
+
+
+        Macintosh II
+           
+           I've never seen Mac II  generated  QRT images, but they should
+           look quite nice  (640x480x256  colors).   There  may  be a few
+           problems compiling QRT on  the  Mac  II  given the non-command
+           line operating system.
+           
+           Color Resolution:
+           
+              Up to 256 colors from a palette of 16 million.
+           
+           QRT Output File Size
+           
+              Approximately 920 K bytes.
+           
+           Commands to run QRT
+           
+              Double click on QRT icon.  Then, type in QRT command line
+              parameters.
+           
+           Commands to run Post Processor
+           
+              Double click on icon
+           
+           File Naming Restrictions
+           
+              Unknown
+           
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 6             Machine Specifics
+
+
+
+
+
+

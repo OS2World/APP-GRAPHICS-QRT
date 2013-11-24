@@ -1,0 +1,590 @@
+         {
+            SHELL.QRT
+            Steve Enns
+         }
+
+
+         FILE_NAME = shell3.RAW
+
+         { *********************  OBJECTS  ********************* }
+
+         PATTERN ( x_size = 60,                 { ** Checkered pattern ** }
+                   y_size = 60,
+                   name   = CHECK,
+                   RECTANGLE (
+                     start_x = 0,
+                     start_y = 0,
+                     end_x   = 30,
+                     end_y   = 30,
+                     diff    = (.1,.3,.1),
+                   )
+                   RECTANGLE (
+                     start_x = 30,
+                     start_y = 30,
+                     end_x   = 60,
+                     end_y   = 60,
+                     diff    = (.1,.3,.1),
+                   )
+                 )
+
+
+         { ** ground (standard checkered type) ** }
+
+         PARALLELOGRAM ( loc  = (  -10000, -100,  -10000),  { ** big! ** }
+                         v1   = (20000, 0,    0),
+                         v2   = (  0, 0, 20000),
+
+                         diff = (  .8, .8, 0),
+                         pattern = CHECK
+                         xmult = 2
+                         ymult = 2
+                        )
+         { ** Shell (series of spheres...) ** }
+
+         BEGIN_BBOX
+
+            SPHERE ( loc     = (0.0000,250.0000,0.0000)
+                     radius  = 0.0000
+                     diff    = (.9, .1, 0.5000)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (0.0699,247.6000,0.0720)
+                     radius  = 0.1004
+                     diff    = (.9, .1, 0.6947)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-0.0083,245.2000,0.2838)
+                     radius  = 0.2839
+                     diff    = (.9, .1, 0.8587)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-0.3846,242.8000,0.3523)
+                     radius  = 0.5216
+                     diff    = (.9, .1, 0.9660)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-0.8017,240.4000,-0.0469)
+                     radius  = 0.8031
+                     diff    = (.9, .1, 0.9998)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-0.7336,238.0000,-0.8494)
+                     radius  = 1.1223
+                     diff    = (.9, .1, 0.9546)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (0.1291,235.6000,-1.4697)
+                     radius  = 1.4753
+                     diff    = (.9, .1, 0.8377)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (1.4419,233.2000,-1.1736)
+                     radius  = 1.8591
+                     diff    = (.9, .1, 0.6675)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (2.2559,230.8000,0.2647)
+                     radius  = 2.2714
+                     diff    = (.9, .1, 0.4708)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (1.6488,228.4000,2.1511)
+                     radius  = 2.7104
+                     diff    = (.9, .1, 0.2787)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-0.4619,226.0000,3.1406)
+                     radius  = 3.1744
+                     diff    = (.9, .1, 0.1216)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-2.9704,223.6000,2.1421)
+                     radius  = 3.6623
+                     diff    = (.9, .1, 0.0242)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-4.1090,221.2000,-0.7274)
+                     radius  = 4.1729
+                     diff    = (.9, .1, 0.0019)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-2.6395,218.8000,-3.8951)
+                     radius  = 4.7052
+                     diff    = (.9, .1, 0.0583)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (1.0675,216.4000,-5.1489)
+                     radius  = 5.2584
+                     diff    = (.9, .1, 0.1844)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (4.9211,214.0000,-3.1292)
+                     radius  = 5.8317
+                     diff    = (.9, .1, 0.3603)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (6.2500,211.6000,1.4873)
+                     radius  = 6.4245
+                     diff    = (.9, .1, 0.5583)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (3.6004,209.2000,6.0452)
+                     radius  = 7.0361
+                     diff    = (.9, .1, 0.7471)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-1.9918,206.8000,7.4028)
+                     radius  = 7.6660
+                     diff    = (.9, .1, 0.8968)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-7.2639,204.4000,4.0438)
+                     radius  = 8.3137
+                     diff    = (.9, .1, 0.9840)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-8.5984,202.0000,-2.5850)
+                     radius  = 8.9786
+                     diff    = (.9, .1, 0.9947)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-4.4503,199.6000,-8.5742)
+                     radius  = 9.6603
+                     diff    = (.9, .1, 0.9273)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (3.2706,197.2000,-9.8286)
+                     radius  = 10.3585
+                     diff    = (.9, .1, 0.7925)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (9.9725,194.8000,-4.8118)
+                     radius  = 11.0727
+                     diff    = (.9, .1, 0.6114)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (11.0853,192.4000,4.0520)
+                     radius  = 11.8026
+                     diff    = (.9, .1, 0.4128)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (5.1206,190.0000,11.4556)
+                     radius  = 12.5479
+                     diff    = (.9, .1, 0.2280)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-4.9320,187.6000,12.3607)
+                     radius  = 13.3083
+                     diff    = (.9, .1, 0.0861)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-13.0197,185.2000,5.3693)
+                     radius  = 14.0834
+                     diff    = (.9, .1, 0.0095)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-13.6471,182.8000,-5.9128)
+                     radius  = 14.8730
+                     diff    = (.9, .1, 0.0104)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-5.5511,180.4000,-14.6611)
+                     radius  = 15.6768
+                     diff    = (.9, .1, 0.0886)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (6.9967,178.0000,-14.9372)
+                     radius  = 16.4947
+                     diff    = (.9, .1, 0.2317)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (16.3759,175.6000,-5.6594)
+                     radius  = 17.3262
+                     diff    = (.9, .1, 0.4172)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (16.2235,173.2000,8.1851)
+                     radius  = 18.1713
+                     diff    = (.9, .1, 0.6158)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (5.6879,170.8000,18.1598)
+                     radius  = 19.0297
+                     diff    = (.9, .1, 0.7960)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-9.4793,168.4000,17.4986)
+                     radius  = 19.9012
+                     diff    = (.9, .1, 0.9296)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-20.0084,166.0000,5.6310)
+                     radius  = 20.7857
+                     diff    = (.9, .1, 0.9953)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-18.7554,163.6000,-10.8802)
+                     radius  = 21.6828
+                     diff    = (.9, .1, 0.9828)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-5.4828,161.2000,-21.9171)
+                     radius  = 22.5925
+                     diff    = (.9, .1, 0.8941)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (12.3882,158.8000,-19.9867)
+                     radius  = 23.5146
+                     diff    = (.9, .1, 0.7432)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (23.8811,156.4000,-5.2382)
+                     radius  = 24.4489
+                     diff    = (.9, .1, 0.5539)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (21.1853,154.0000,14.0036)
+                     radius  = 25.3952
+                     diff    = (.9, .1, 0.3560)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (4.8922,151.6000,25.8954)
+                     radius  = 26.3534
+                     diff    = (.9, .1, 0.1809)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-15.7260,149.2000,22.3442)
+                     radius  = 27.3235
+                     diff    = (.9, .1, 0.0562)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-27.9546,146.8000,4.4402)
+                     radius  = 28.3051
+                     diff    = (.9, .1, 0.0015)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-23.4565,144.4000,-17.5550)
+                     radius  = 29.2982
+                     diff    = (.9, .1, 0.0256)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-3.8776,142.0000,-30.0535)
+                     radius  = 30.3026
+                     diff    = (.9, .1, 0.1245)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (19.4896,139.6000,-24.5152)
+                     radius  = 31.3183
+                     diff    = (.9, .1, 0.2827)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (32.1864,137.2000,-3.2005)
+                     radius  = 32.3451
+                     diff    = (.9, .1, 0.4752)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (25.5135,134.8000,21.5285)
+                     radius  = 33.3829
+                     diff    = (.9, .1, 0.6717)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (2.4051,132.4000,34.3474)
+                     radius  = 34.4315
+                     diff    = (.9, .1, 0.8410)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-23.6702,130.0000,26.4447)
+                     radius  = 35.4909
+                     diff    = (.9, .1, 0.9565)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-36.5306,127.6000,1.4878)
+                     radius  = 36.5609
+                     diff    = (.9, .1, 0.9999)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-27.3022,125.2000,-25.9128)
+                     radius  = 37.6415
+                     diff    = (.9, .1, 0.9644)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-0.4454,122.8000,-38.7299)
+                     radius  = 38.7325
+                     diff    = (.9, .1, 0.8556)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (28.2540,120.4000,-28.0793)
+                     radius  = 39.8339
+                     diff    = (.9, .1, 0.6906)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (40.9390,118.0000,0.7248)
+                     radius  = 40.9455
+                     diff    = (.9, .1, 0.4956)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (28.7697,115.6000,30.6913)
+                     radius  = 42.0672
+                     diff    = (.9, .1, 0.3012)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-2.0256,113.2000,43.1515)
+                     radius  = 43.1990
+                     diff    = (.9, .1, 0.1383)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-33.2217,110.8000,29.3671)
+                     radius  = 44.3408
+                     diff    = (.9, .1, 0.0324)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-45.3608,108.4000,-3.4591)
+                     radius  = 45.4925
+                     diff    = (.9, .1, 0.0004)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (-29.8653,106.0000,-35.8421)
+                     radius  = 46.6540
+                     diff    = (.9, .1, 0.0472)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (5.0273,103.6000,-47.5602)
+                     radius  = 47.8252
+                     diff    = (.9, .1, 0.1655)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (38.5490,101.2000,-30.2582)
+                     radius  = 49.0060
+                     diff    = (.9, .1, 0.3367)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+            SPHERE ( loc     = (49.7429,98.8000,6.7319)
+                     radius  = 50.1964
+                     diff    = (.9, .1, 0.5336)
+                     amb     = (.1, .1, .1)
+                     reflect = .60
+                     sreflect= 20 
+                   )
+
+         END_BBOX
+
+         { ** An observer ** }
+
+         OBSERVER ( loc    = (200, 200, 200)
+                    lookat = (0, 100, 0)
+                  )
+
+         { ** Lights (but not Bud lights) ** }
+
+         LAMP ( loc = (20, 140, 20),
+                radius = 15,
+                dist = 140
+              )
+
+         LAMP ( loc = (240, 75, -45),
+                radius = 15,
+                dist = 70
+              )
+         LAMP ( loc = (-30, 200, 30),
+                radius = 10,
+                dist = 100
+              )
+
+         SKY  ( horiz  = (.3, .3, .75),
+                zenith = (.1, .1, .50),
+                dither = 4
+              )
+
+         FOC_LENGTH = 60
+
+         {**** END ****}
+

@@ -1,0 +1,19 @@
+CFLAGS = -n
+
+OBJECTS=  bbox.o  error.o inout.o instance.o intersect.o lexer.o \
+	  mth.o norm.o offset.o pattern.o patternio.o precomp.o \
+	  ray.o  relpos.o resize.o stack.o
+
+$(OBJECTS):  qrt.h pattern.h
+	tcc -c $(OBJECTS)
+
+qrt.exe:   $(OBJECTS) qrt.o
+	tlink -o qrt qrt.o $(OBJECTS) -lm -lc
+	tcc -c qrt $(OBJECTS)
+
+qrtpost.exe:   qrtpost.o
+	tlink -o qrtpost qrtposto -lm -lc
+	tcc -c qrtpost
+
+
+

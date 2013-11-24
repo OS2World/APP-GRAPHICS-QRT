@@ -1,0 +1,264 @@
+
+
+
+
+
+
+        
+        
+        
+                           Addendum to QRT Version 1.5
+        
+        
+        
+        The following are changes to QRT made since version 1.4
+        
+        
+        Additions and Enhancements
+        
+           Non-Hardcoded Resolution and Aspect Ratio
+           
+               This release of QRT has  additional  support for non-Amiga
+               platforms.  The QRT input  language  has  been extended to
+               allow the x  and  y  resolution  and  aspect  ratio  to be
+               changed.   The   additional   keywords  are  part  of  the
+               DEFAULT() command, as in this example:
+               
+                    DEFAULT (
+                         x_res  = 1280,  { ** BIG image ** }
+                         y_res  = 1024,
+                         aspect = .89
+                    );
+               
+               
+               QRT can generate images  in  any  practical  resolution (I
+               have tested it up to 1280  x  1024;  the  current limit is
+               2500  x  anything)  but  the   image  generation  time  is
+               proportional to the image size.   The aspect ratio for any
+               monitor can be determined as follows:
+               
+                    aspect ratio = (XR/XD)/(YR/YD)
+               
+               where:
+               
+                    XR = X resolution of monitor
+                    XD = width of monitor in arbitrary units
+               
+                    YR = Y resolution of monitor
+                    YD = height length of monitor in arbitrary units
+               
+               There  are  #ifdefs  in  the  code  which  should  provide
+               reasonable defaults for UNIX  and  AMIGA machines.  Images
+               can now be generated quickly in  low resolutions, and once
+               the desired image is found,  it  can be generated the full
+               displayable resolution.
+               
+
+
+
+
+        QRT Ray Tracer               Page 1               Addendum to 1.5
+
+
+
+
+
+
+
+
+
+
+
+
+           Command Line Arguments
+               
+               QRT  now  accepts  optional  command  line  arguments,  as
+               follows:
+               
+                    -xres   integer
+                    -yres   integer
+                    -aspect float
+                    -foclen float
+               
+               For example,  the  following  line  would  run  QRT in the
+               background with a resolution of 127 x 127:
+               
+                    run qrt <file.QRT >file.OUT -xres 127 -yres 127
+               
+               or, in UN*X,
+               
+                    qrt <file.QRT >file.OUT -xres 127 -yres 127 &
+               
+               These options are very  useful  for generating preliminary
+               images in a low resolution without changing the .QRT input
+               file.  Since it is possible to set these parameters from 3
+               places, QRT places them in order of increasing priority as
+               follows:
+               
+                    Built-in Defaults
+                    Parameters in .QRT file
+                    Command Line Arguments
+               
+               Thus, any command line  arguments  present  will supersede
+               parameters coded into the .QRT file, and parameters in the
+               QRT file, if present,  will  supersede  the  built  in QRT
+               defaults.
+               
+               
+           Bug Fixes
+               
+               Version 1.5 of QRT fixes these bugs:
+               
+                   1) Lexer malloc() bug -  the  lexer was not allocating
+                      enough memory for  some  symbols,  causing  QRT  to
+                      crash upon reading  certain  input files.  This has
+                      been fixed.
+                   
+                   2) toupper()  compatibility  bug  - apparently not all
+                      compilers treat  toupper()  the  same - some change
+                      only lower case letters,  as  seems  logical, while
+                      others change all characters.   This function is no
+                      longer used in QRT to decrease porting effort.
+                   
+                   3) Due to  a  really  stupid  error  on  my  part, the
+
+
+        QRT Ray Tracer               Page 2               Addendum to 1.5
+
+
+
+
+
+
+
+
+
+
+
+
+                      DiffColor()  was  executing  a  pow() function call
+                      every time  though,  whether  it  needed to or not.
+                      Since this  pow()  function  is  slow, QRT now runs
+                      noticeably  faster  than  it  used  to.   I haven't
+                      quantified the results,  but  it seems to be around
+                      20 to 30 percent.  The  increase  in  speed will be
+                      most noticeable on machines  with no floating point
+                      co-processor.
+                   
+                   4) The  TRIANGLE()  command  now  works  correctly for
+                      non-right  triangles.   The  bug  fix for this also
+                      fixed a bug with non - rectangular parallelograms.
+                   
+                   5) Focal length is no longer resolution dependent.
+                   
+                   6) CINFO structures are now  always initialized before
+                      they are copied.  This  bug  fix  was sent to me by
+                      Paul Bayloz.
+                   
+                   
+           Enhancements
+               
+               Additional information about the  image is now sent to the
+               standard output.  Image X  and  Y  size, aspect ratio, and
+               focal length are printed.
+               
+               I have finally revisited the original  documentation files
+               to include some of  the  information  from  the addendums.
+               This will make it easier for new users of QRT to learn the
+               system.  I fixed a bunch of spelling errors, too.
+               
+               Tabs are now counted as  white  space; they will no longer
+               cause QRT to report an error message.
+               
+               
+           Deletions
+               
+               The  FIRST_SCAN  and   LAST_SCAN   parameters   have  been
+               obsoleted by the addition of the X_RES and Y_RES commands.
+               These  arguments   are   still   accepted   for   backward
+               compatibility of old QRT files, but they are ignored.
+               
+               In addition, since QRT has recently  seen a wider audience
+               in  the  non-Amiga   community,  I  have  removed  several
+               paragraphs  from  Addendum  1.4  which  were  strictly  my
+               personal opinions of some  other  computer  systems.  They
+               might have been OK for  the  Amiga  community,  but seemed
+               less than appropriate for wider circulation.
+               
+
+
+
+
+        QRT Ray Tracer               Page 3               Addendum to 1.5
+
+
+
+
+
+
+
+
+
+
+
+
+        Notes, etc.
+           
+           QRT has now been Un*xized -  it  will  compile correctly under
+           AmigaDos or UN*X.  I  have  added  #define's  for  most common
+           machine types at the beginning of  qrt.h, so these can be used
+           to add  machine  specific  necessary  compiler  stuff  for new
+           machines.
+           
+           I have compiled  QRT  on  an  HP  9000/835  (proprietary  RISC
+           architecture), and it *hauls*.    It will run all the supplied
+           demos in less than 3 and  a  half  minutes  at a resolution of
+           320x400, and some of the simpler ones, such as Wall_Sphere.QRT
+           in less than one and a  half  minutes!   I  may try to compile
+           benchmark times for QRT on  various  platforms  using standard
+           demos and standard  resolutions.   If anyone has any benchmark
+           times, I'd like to hear about them.
+           
+           I have supplied source code  for  a  QRT RAW to GIF converter,
+           written by David Rowley.  This  will  eliminate the problem of
+           finding a post processor for anyone  who has the capability of
+           displaying GIF images (this  should  be nearly everyone).  The
+           program, called QRT2GIF, seems  to  work well, except for very
+           large image sizes where it cannot  malloc() enough memory.  It
+           claims to write a temporary  file,  but  the final GIF file is
+           corrupt.  It is also limited to 256 colors.  I have used it up
+           to resolutions of 768 by 640, however,  with no trouble.  It's
+           a very useful tool.  Thanks, Dave!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 4               Addendum to 1.5
+
+
+
+
+
+

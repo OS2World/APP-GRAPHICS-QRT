@@ -1,0 +1,1584 @@
+
+
+
+
+
+
+        
+        
+        
+                             QRT Language Reference
+        
+        
+        INTRODUCTION
+        
+        This document is a reference  guide  to the QRT command language.
+        One section is devoted to each  QRT  command.   All parameters to
+        commands are listed.
+        
+        More information on QRT can  be  found  in  the User's Manual and
+        Technical Reference Manual.
+        
+        
+        The following table shows the syntax used in this document:
+        
+            TEXT       MEANING              EXAMPLE             RANGE
+        
+            (x,y,z)    floating pt vector   (10, -20, 30.56)    all
+        
+            (r,g,b)    color value triple   (0, .5, 1.00)       0 to 1
+        
+            i          an integer           12                  0 to 127
+        
+            n          floating pt number   -123.4              all
+        
+            p          positive float       123.4               >0
+        
+            string     text string          FOO_BAR             ASCII
+        
+        
+        Each  section  of  this  document  contains  one  or  more of the
+        following sub-sections:
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 1            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+        
+          Command Type          :  OPTIONAL or REQUIRED
+        
+          Parameters (required) :  Lists required parameters
+          Parameters (optional) :  Lists optional parameters
+        
+          Optional Forms        :  Alternatives for parameter names. Ex:
+                                   'horiz' = 'horizon' means either can
+                                   be used as a parameter name.
+        
+          Example               :  An example of the command (with all
+                                   required parameters, but not
+                                   necessarily all optional ones.
+        
+          Restrictions          :  Things not to do
+        
+          See also              :  Similar commands
+        
+        
+        QRT has a free format input language, and parameters can be given
+        in any order.
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 2            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+        
+                            QRT Misc. Setup Commands
+        
+        
+        SKY:
+           
+           Command type: OPTIONAL
+           
+           The SKY command is used to specify  the color of all rays that
+           don't hit any other object.  The sky is black by default.  The
+           sky color at the zenith (up),  and  horizon  can be specified,
+           and QRT will  blend  the  colors  in  between  as  smoothly as
+           possible.  In addition, dithering can be specified.
+           
+           Parameters (optional):
+           
+               zenith = (r,g,b)        : the color of the zenith
+               horiz  = (r,g,b)        : the color at the horizon
+               dither = i              : dithering
+           
+           Optional forms:
+           
+               'horiz' = 'horizon'
+           
+           Example:
+           
+               SKY (  horiz  = (0, 0, .6),
+                      zenith = (0, 0, .4),
+                      dither = 5
+                   )
+           
+           See also : GROUND
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 3            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        GROUND:
+        
+           Command type: OPTIONAL
+           
+           QRT does not have a specific  ground  command.  Instead, use a
+           large parallelogram with an optional pattern.
+           
+               PARALLELOGRAM (  loc = (-10000, 0, -10000),
+                                 v1  = ( 20000, 0,      0),
+                                 v2  = ( 0,     0,  20000),
+           
+                                 pattern = PATTERN_OF_CHOICE
+                              )
+           
+           
+           It is also possible to use a VERY large sphere for the ground,
+           which moves  the  horizon  closer  to  the  observer.  This is
+           advisable when rendering tall, reflecting objects.
+           
+           
+           See also : PARALLELOGRAM, SPHERE
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 4            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+        FOC_LENGTH:
+           
+           Command type: OPTIONAL
+           
+           This sets the focal length of QRT's  "camera".  The default is
+           50, but it can be  changed  with  this  command.  As with 35mm
+           photography, larger numbers  result  in  a 'telephoto' effect,
+           and smaller numbers will result  in wide angle (and distorted)
+           views.  As of QRT 1.5, focal  length  is  no longer resolution
+           dependent.
+           
+           Example:
+           
+               FOC_LENGTH = 70
+           
+           Restrictions:
+           
+               0 < FOC_LENGTH
+           
+           
+        FIRST_SCAN:
+           
+           Command type: OPTIONAL
+           
+           This command is obsolete with QRT  version 1.5.  Use the X_RES
+           and 
+           Y_RES options to the DEFAULT() command.
+           
+           See also : DEFAULT
+           
+           
+        LAST_SCAN:
+           
+           Command type: OPTIONAL
+           
+           This command is also obsolete with QRT 1.5.
+           
+           See also : DEFAULT
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 5            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        FILE_NAME:
+           
+           Command type: REQUIRED
+           
+           This is used to set  the  output  file  for QRT, which will be
+           read by the post processor.  The  file  name will be mapped to
+           upper case.   Some  restrictions  may   arise from file naming
+           conventions on specific computers.
+           
+               Example:
+           
+                   FILE_NAME = QRT_IMAGE.RAW
+           
+           
+        OBSERVER:
+           
+           Command type: REQUIRED
+           
+           OBSERVER tells QRT where  the  observer  is  located,  and his
+           direction of view.  The view direction  is specified by giving
+           the coordinates he should look at.   In addition, the observer
+           UP vector may be given.  This is, by default, (0,1,0).
+           
+           Parameters (required):
+           
+               loc     = (x,y,z)           : location of observer
+               lookat  = (x,y,z)           : point of interest
+           
+           Parameters (optional):
+           
+               up      = (x,y,z)           : up vector
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+           
+           Example:
+           
+               OBSERVER ( loc    = (0, 0, 0),
+                          lookat = (100, 0, 0)
+                        )
+           
+           Restrictions:
+           
+               The observer cannot  look  in  the  direction  of  the  up
+           vector.
+               'lookat' cannot be equal to 'loc'.
+               'up' must have non-zero length.
+           
+           
+
+
+        QRT Ray Tracer               Page 6            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        LAMP:
+           
+           Command type: OPTIONAL
+           
+           Lamps are  sources  of  light  in  QRT.   They  can  be placed
+           anywhere, and emit any  color  and  intensity  of  light.  The
+           ambient light value is the  color  of  the lamp.  The distance
+           parameter is the minimum  distance  from the lamp that objects
+           will be illuminated at full intensity.  Most objects should be
+           farther from the lamp than  this  value,  or else they will be
+           washed out.  The radius parameter  is ignored by this  version
+           of QRT, but may  eventually  be  used  to  implement penumbral
+           shadows.
+           
+           Parameters (required):
+           
+               loc     = (x,y,z)           : location of object
+               dist    = p                 : distance of max illumination
+           
+           Parameters (optional):
+           
+               amb     = (r,g,b)           : ambient light
+               radius  = p                 : radius
+           
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+           
+           Example:
+           
+               LAMP (     loc    = (12,34,56),
+                          radius = 123.4,
+                    )
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 7            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+                               QRT Primitive Types
+        
+        
+        SPHERE:
+           
+           Command type: OPTIONAL
+           
+           SPHERE creates a sphere  with  a  given  location, radius, and
+           surface characteristics.
+           
+           Parameters (required):
+           
+               loc     = (x,y,z)           : location of object
+               radius  = p                 : radius
+           
+           Parameters (optional):
+           
+               name    = string            : name for object
+               pattern = string            : pattern name to attach
+               remove  = string            : pattern to cut out
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               density = (r,g,b)           : light attenuation
+               mirror  = (r,g,b)           : mirror reflection
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+           
+           Example:
+           
+               SPHERE   ( loc    = (100, 100, 50.234),
+                          radius = 123.4,
+                          diff   = (1.00, .20, .20)
+                        )
+           
+           
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 8            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        PARALLELOGRAM:
+           
+           Command type: OPTIONAL
+           
+           This command creates a  parallelogram  with  a given location,
+           shape, and surface  characteristics.   Two  vectors define the
+           shape of the parallelogram (they need not be orthogonal).
+           
+           Parameters (required):
+           
+               loc     = (x,y,z)           : location of object
+               v1      = (x,y,z)           : vector for side one
+               v2      = (x,y,z)           : vector for side two
+           
+           Parameters (optional):
+           
+               name    = string            : name for object
+               pattern = string            : pattern name to attach
+               remove  = string            : pattern to cut out
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               density = (r,g,b)           : light attenuation
+               mirror  = (r,g,b)           : mirror reflection
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+               'vect1' = 'v1'
+               'vect2' = 'v2'
+           
+           Example:
+           
+               PARALLELOGRAM ( loc    = (10, 20, 50),
+                               vect1  = (20,  0,  0),
+                               vect2  = ( 0,  0,  50),
+                               diff   = (0, .90, .20)
+                             )
+           
+           
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 9            Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        TRIANGLE:
+           
+           Command type: OPTIONAL
+           
+           The TRIANGLE  command  (similar  to  PARALLELOGRAM)  creates a
+           triangle shape.  Two vectors define the sides of the triangle.
+           
+           Parameters (required):
+           
+               loc     = (x,y,z)           : location of object
+               v1      = (x,y,z)           : vector for side one
+               v2      = (x,y,z)           : vector for side two
+           
+           Parameters (optional):
+           
+               name    = string            : name for object
+               pattern = string            : pattern name to attach
+               remove  = string            : pattern to cut out
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               density = (r,g,b)           : light attenuation
+               mirror  = (r,g,b)           : mirror reflection
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+               'vect1' = 'v1'
+               'vect2' = 'v2'
+           
+           Example:
+           
+               TRIANGLE      ( loc    = (52, 21, 50),
+                               vect1  = (10,  5,  0),
+                               vect2  = ( 0,  8, 20),
+                               diff   = ( 0,  0,  0),
+                               mirror = ( 1,  1,  1)
+                             );
+           
+           
+
+
+
+
+
+
+        QRT Ray Tracer               Page 10           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+        RING:
+           
+           Command type: OPTIONAL
+           
+           RING creates  a  ring  (annulus),  which  is  a  circle with a
+           smaller circle cut out of it.    If  the inner radius is zero,
+           the ring will be a  simple  circle.   Two  vectors  define the
+           plane of the annulus, as with RING and PARALLELOGRAM.
+           
+           Parameters (required):
+           
+               loc     = (x,y,z)           : location of object
+               v1      = (x,y,z)           : vector one
+               v2      = (x,y,z)           : vector two
+               rad_1   = p                 : inner radius
+               rad_2   = p                 : outer radius
+           
+           Parameters (optional):
+           
+               name    = string            : name for object
+               pattern = string            : pattern name to attach
+               remove  = string            : pattern to cut out
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               density = (r,g,b)           : light attenuation
+               mirror  = (r,g,b)           : mirror reflection
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+               'vect1' = 'v1'
+               'vect2' = 'v2'
+           
+           Example:
+           
+               RING      ( loc    = (52, 21, 50),
+                           v1     = (10,  5,  0),
+                           v2     = ( 0,  8, 20),
+                           rad_1  = 10,
+                           rad_2  = 20,
+                         )
+           
+           Restrictions:
+           
+               0 < rad_1 < rad_2
+
+
+        QRT Ray Tracer               Page 11           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        QUADRATIC:
+           
+           Command type: OPTIONAL
+           
+           This  command  creates  a  quadratic   surface  given  by  the
+           equation:
+           
+                    2     2     2
+                 a x + b y + c z  = d
+           
+           The coefficients a,b,c and d can be specified.  This primitive
+           can be used to  create  cylinders,  cones,  oblong  spheroids,
+           etc.  Several min  and  max  parameters  specify  the  maximum
+           extents of the surface.
+           
+           Parameters (required):
+           
+               loc     = (x,y,z)           : location of object
+               a       = n
+               b       = n
+               c       = n
+               d       = n
+               xmax    = n
+               xmin    = n
+               ymax    = n
+               ymin    = n
+               zmax    = n
+               zmin    = n
+           
+           Parameters (optional):
+           
+               name    = string            : name for object
+               pattern = string            : pattern name to attach
+               remove  = string            : pattern to cut out
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               density = (r,g,b)           : light attenuation
+               mirror  = (r,g,b)           : mirror reflection
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+           
+
+
+        QRT Ray Tracer               Page 12           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+           Example:
+           
+               { ** vertical cylinder ** }
+           
+               QUADRATIC   ( loc    = (57, 21.2, 0),
+                               a    = 1,
+                               b    = 0,
+                               c    = 1,
+                               d    = 100
+                           );
+           
+           Restrictions:
+           
+               a != 0 or b != 0 or c != 0
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 13           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+           
+                               Patterned Surfaces
+        
+        
+        PATTERN:
+           
+           Command type: OPTIONAL
+           
+           This  command  creates  a  pattern  definition  which  can  be
+           attached  to  any  primitive  object.   A  pattern  is  a  two
+           dimensional array than can  be  mapped  to  the surface of any
+           primitive.  Patterns must be defined before they are used. The
+           PATTERN keyword serves  two  functions:  to  create  a pattern
+           definition, and to attach this definition  to a primitive. The
+           correct meaning is found by  context:   if the PATTERN keyword
+           appears in a primitive  definition  followed  by a name, it is
+           assumed to refer to a predefined  pattern. However, if PATTERN
+           occurs outside any primitive definition, it is assumed to be a
+           pattern  definition.   If  all  the  pattern  definitions  are
+           grouped at the top of the  file,  they  will always be defined
+           before they are used.
+            
+           A pattern is defined by giving  it  a size, a name, and one or
+           more sub-pattern definitions.  There are currently three types
+           of  sub-patterns:  CIRCLE,   RECTANGLE,   and   POLYGON.   The
+           sub-pattern list can be  of  any  length  (although long lists
+           will slow the ray    tracer), and can use several of each type
+           of sub-pattern    primitive.
+           
+           The X and Y size parameters  specify  the size of the pattern;
+           the pattern will be  repeated  over  the  surface of an object
+           each X or Y units in  the  indicated  direction.   These  size
+           units are arbitrary, since the pattern can be given a new size
+           when attached to an object.
+           
+           In each sub-pattern, any object surface characteristics can be
+           specified.  If a given ray hits  this sub-pattern, the surface
+           will be colored  as  indicated.   If  it  does not hit any sub
+           pattern   in   the   list,   the   objects   default   surface
+           characteristics will be  used.    The  example below defines a
+           red-checkered pattern.  The background  color of the object to
+           which this pattern is attached will determine the color of the
+           other checker box in the pattern.
+           
+           Parameters (required):
+           
+               name    = string            : name for pattern
+               x_size  = p                 : x size of pattern
+               y_size  = p                 : y size of pattern
+           
+
+
+        QRT Ray Tracer               Page 14           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           Parameters (optional):
+           
+               CIRCLE  = circle_defn       : CIRCLE sub-pattern - see
+                                             reference for CIRCLE
+           
+               RECTANGLE = rect_defn       : RECTANGLE sub-pattern - see
+                                             reference for RECTANGLE
+           
+               POLYGON   = poly_defn       : POLYGON sub-pattern - see
+                                             reference for POLYGON.
+           
+           Example:
+           
+                PATTERN ( x_size = 16,
+                          y_size = 16,
+                          name   = CHECK,
+           
+                          RECTANGLE (
+                            start_x = 0, start_y = 0,
+                            end_x   = 8, end_y   = 8,
+                            diff    = (1.00, .20, .20);
+                          )
+           
+                          RECTANGLE (
+                            start_x = 8,  start_y = 8,
+                            end_x   = 16, end_y   = 16,
+                            diff    = (1.00, .20, .20);
+                          )
+                        )
+           
+               This pattern can now be attached to an object as follows:
+           
+               SPHERE ( { ** sphere definition here ** }
+                        pattern = CHECK,
+                        xmult   = .5,
+                        ymult   = .5
+                      )
+           
+               Where the xmult and ymult parameters specify a new size
+               for the pattern.
+           
+           Restrictions:
+           
+               At least one sub-pattern must appear.
+           
+               If two sub-patterns overlap in a region, the last one
+                  defined will be used in this region.
+           
+           See also : RECTANGLE, CIRCLE, PARALLELOGRAM
+
+
+
+
+        QRT Ray Tracer               Page 15           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        RECTANGLE:
+           
+           Command type: OPTIONAL
+           
+           RECTANGLE is a type of sub-pattern.
+           
+           Parameters (required):
+           
+               start_x = p                 : start position for rectangle
+               start_y = p
+               end_x   = p                 : end position for rectangle
+               end_y   = p
+           
+           Parameters (optional):
+           
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               mirror  = (r,g,b)           : mirror reflection
+               density = (r,g,b)           : light attenuation
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           Example:
+           
+               RECTANGLE (
+                   start_x = 10, start_y = 12,
+                   end_x   = 15, end_y   = 15,
+           
+                   diff    = (1.00, .20, .20);
+               )
+           
+           Restrictions:
+           
+               RECTANGLE should be used only within a pattern definition.
+               start_x < end_x
+               start_y < end_y
+           
+           See also : PATTERN
+           
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 16           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        CIRCLE:
+           
+           Command type: OPTIONAL
+           
+           CIRCLE is a type of sub-pattern.
+           
+           Parameters (required):
+           
+               radius  = p                 : radius
+           
+           Parameters (optional):
+           
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               mirror  = (r,g,b)           : mirror reflection
+               density = (r,g,b)           : light attenuation
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           Example:
+           
+               CIRCLE (
+                 radius  = 5,
+                 diff    = (1.00, .20, .20);
+               )
+           
+           Restrictions:
+           
+               CIRCLE should be used only within a pattern definition.
+           
+           
+           See also : PATTERN
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 17           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+        POLYGON:
+           
+           Command type: OPTIONAL
+           
+           POLYGON is a type of sub-pattern.
+           
+           Parameters (required):
+           
+               point   = (x,y)             : a point of the polygon.  Any
+                                             number of points can be
+                                             defined, but at least four
+                                             must be defined, with the
+                                             last the same as the first.
+           
+           Parameters (optional):
+           
+               amb     = (r,g,b)           : ambient light
+               diff    = (r,g,b)           : diffuse reflection
+               trans   = (r,g,b)           : transmission
+               mirror  = (r,g,b)           : mirror reflection
+               density = (r,g,b)           : light attenuation
+               fuzz    = i                 : currently unused
+               index   = p                 : index of refraction
+               dither  = i                 : dithering
+               sreflect= p                 : Phong specular refl. coeff.
+               reflect = p                 : percent specular reflection
+           
+           Example:
+           
+               POLYGON (
+                 point = (0,0),      { triangle pattern }
+                 point = (10, 0),
+                 point = (0, 10),
+                 point = (0,0)
+               )
+           
+           
+           Restrictions:
+           
+               POLYGON should be used only within a pattern definition.
+               The last point defined must be the same as the first.
+               At least 4 points must appear, with the last the same
+                 as the first.
+           
+           See also : PATTERN
+           
+           
+
+
+
+
+
+
+        QRT Ray Tracer               Page 18           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+                                 Bounding Boxes
+        
+        
+        BEGIN_BBOX:
+           
+           Command type: OPTIONAL
+           
+           The BEGIN_BBOX, END_BBOX  commands  form an enclosing bounding
+           box around  a  group  of  objects  (which  may  include  other
+           bounding boxes).  An optional  name  must precede the bounding
+           box begin statement.  Bounding  boxes  cannot be given surface
+           characteristics, since they are conceptual objects.
+           
+           Parameters (optional):
+           
+               name    = string            : name for box
+           
+           Example:
+           
+               name = SAMPLE_BBOX
+               BEGIN_BBOX
+                   SPHERE   ();            { ** sphere    here ** }
+                   TRIANGLE ();            { ** triangle  here ** }
+               END_BBOX
+           
+           Restrictions:
+           
+               Must be paired with an END_BBOX statement.
+           
+           
+           
+        END_BBOX:
+           
+           Command type: OPTIONAL
+           
+           Companion command to BEGIN_BBOX.
+           
+           Example:
+           
+               name = SAMPLE_BBOX
+               BEGIN_BBOX
+                   SPHERE   ();            { ** sphere    here ** }
+                   TRIANGLE ();            { ** triangle  here ** }
+               END_BBOX
+           
+           Restrictions:
+           
+               Must be paired with a BEGIN_BBOX statement.
+           
+           
+
+
+        QRT Ray Tracer               Page 19           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        
+                                    Instances
+        
+        
+        
+        BEGIN_INSTANCES:
+           
+           Command type: OPTIONAL
+           
+           Several primitives may be grouped into an 'instance', and this
+           group can easily be placed in several locations.  In addition,
+           it can be resized.  All  instance  definitions  must be placed
+           within the BEGIN_INSTANCES and END_INSTANCES  statements; only
+           one set of these statements  is  allowed.   A group of objects
+           must be placed in a BBOX, and this  BBOX must be given a name.
+           In the following example, three objects are defined: OBJECT_1,
+           SUB_OBJECT_1, and  OBJECT_2.  Any  inclusion  of OBJECT_1 will
+           implicitly  include   SUB_OBJECT_1,  but  not  OBJECT_2.   Any
+           arbitrary object tree can  be  included.  Referring  to a node
+           will include the sub-tree rooted at that node.
+           
+           Example:
+           
+               BEGIN_INSTANCES
+           
+                   NAME = OBJECT_1
+                   BEGIN_BBOX
+           
+                       { ** some primitives here ** }
+                       NAME = SUB_OBJECT_1
+                       BEGIN_BBOX
+                         { ** some more primitives here ** }
+                       END_BBOX
+                   END_BBOX
+           
+                   NAME = OBJECT_2
+                   BEGIN_BBOX
+                       { ** more primitives ** }
+                   END_BBOX
+           
+               END_INSTANCES
+           
+           Restrictions:
+           
+               There can be only one BEGIN_INSTANCES statement.
+               There must be a matching END_INSTANCES statement.
+           
+           See also: END_INSTANCES, INSTANCE_OF
+           
+           
+
+
+        QRT Ray Tracer               Page 20           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        END_INSTANCES:
+           
+           Command type : OPTIONAL
+           
+           This command specifies  the  end  of  the  instance tree.  Any
+           primitive  after  the  END_INSTANCES  statement  are  actually
+           displayed as part of the image.
+           
+           Restrictions:
+           
+               There can be only one END_INSTANCES statement.
+           
+           See Also:  BEGIN_INSTANCES, INSTANCE_OF
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 21           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        INSTANCE_OF:
+           
+           Command type: OPTIONAL
+           
+           After an instance tree is  defined  with  the BEGIN_INSTANCES,
+           END_INSTANCES command pair, parts  of the tree can be referred
+           to with the  INSTANCE_OF  statement.   This  actually puts the
+           sub-tree in the image.  You must specify the name of the  root
+           of the sub-tree.   The  original  instance  should  be defined
+           relative to (0,0,0),  and  the  location  parameter  specifies
+           where the new copy will go.
+           
+           Parameters (required):
+           
+               name    = string            : name of sub-tree
+               loc     = (x,y,z)           : location for instance
+           
+           Parameters (optional):
+           
+               scale   = (x,y,z)           : scale factor
+           
+           Example:
+           
+               INSTANCE_OF ( name   = OBJECT_1,
+                             loc    = (100.23, 20.23, 45.678),
+                             scale  = (.5, .5, .5)
+                           )
+           
+           Optional forms:
+           
+               'loc' = 'pos' = 'location' = 'position'
+           
+           Restrictions:
+           
+               All scale factor entries should be greater than zero.
+           
+               If the scale factor entries are unequal, some primitives
+                 in the instance will not be affected correctly.  For
+                 example, a SPHERE will remain round if scaled by
+                 (1,2,3), not change to a QUADRATIC spheroid.
+           
+           
+           See also : BEGIN_INSTANCES, END_INSTANCES
+           
+           
+        
+        
+
+
+
+
+
+        QRT Ray Tracer               Page 22           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+        
+                                Setting Defaults
+        
+        DEFAULT:
+           
+           Command type: OPTIONAL
+           
+           QRT sets  certain  defaults  for  the  color  attributes  of a
+           surface.   The   standard   default   is   for  a  white,  non
+           reflective, non shiny, non  transparent  surface with a medium
+           amount of dithering.  These  defaults  can be changed with the
+           DEFAULT  command.   More  than  one  DEFAULT  command  can  be
+           included, in which case each one  affects all primitives after
+           it and before the  next  DEFAULT  or  the end of the file.  In
+           addition to new surface characteristics, the NO_SHADOW keyword
+           instructs QRT not to compute shadow information for the scene.
+           This can decrease  image  generation  time  at  the expense of
+           image quality.  X and Y resolution  and image aspect ratio can
+           be set in the  DEFAULT  command.   If  they  are set more than
+           once, the values from the last DEFAULT command are taken.
+           
+           The aspect ratio for any monitor can be determined as follows:
+           
+                aspect ratio = (XR/XD)/(YR/YD)
+           
+           where:
+           
+                XR = X resolution of monitor
+                XD = width of monitor in arbitrary units
+           
+                YR = Y resolution of monitor
+                YD = height length of monitor in arbitrary units
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 23           Language Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+           Parameters (optional):
+           
+               no_shadow                   : QRT will not compute
+                                             shadow information
+           
+               threshold = p               : QRT will stop tracing
+                                             reflected or transmitted
+                                             rays when they reach this
+                                             percent of their original
+                                             intensity.
+           
+               x_res     = p               : X image resolution.  Any
+                                             command line arguments
+                                             override this parameter.
+           
+               x_res     = p               : Y image resolution.  Any
+                                             command line arguments
+                                             override this parameter.
+           
+               aspect    = p               : image aspect ratio.  This
+                                             is computer and resolution
+                                             dependent.
+           
+               amb       = (r,g,b)         : ambient light
+               diff      = (r,g,b)         : diffuse reflection
+               trans     = (r,g,b)         : transmission
+               density   = (r,g,b)         : light attenuation
+               mirror    = (r,g,b)         : mirror reflection
+               fuzz      = i               : currently unused
+               index     = p               : index of refraction
+               dither    = i               : dithering
+               sreflect  = p               : Phong specular refl. coeff.
+               reflect   = p               : percent specular reflection
+           
+           Example:
+           
+               DEFAULT ( no_shadow,         { * no shadowing * }
+                         diff = (1, 0, 0)   { * default = red objects * }
+           
+                         x_res  = 1280,  { ** BIG image ** }
+                         y_res  = 1024,
+                         aspect = .89
+               );
+           
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 24           Language Reference
+
+
+
+
+
+

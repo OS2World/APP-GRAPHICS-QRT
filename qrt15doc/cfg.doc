@@ -1,0 +1,396 @@
+
+
+
+
+
+
+
+
+
+           Context Free Grammar for QRT Input Language
+
+
+
+   Notes: '(' and ')' are non-terminal symbols
+          (  and  )   are CFG parens
+          +           is one or more than one
+
+          * lower case strings in grammar are non-terminals
+          * input language is not case sensitive
+          * <WHITE_SPACE> = blank | newline | tab
+          * args can be separated by optional ',' or ';'
+          * '=' can separate argument name from value
+                or string.
+
+
+
+  <WORLD>         = <INSTANCE_DEFS> ( <OBJECT> | <ATTRIBUTE> )+
+
+   
+  <INSTANCE_DEFS> = begin_instances <OBJECT>+ end_instances
+
+ 
+  <OBJECT>        = <PRIMITIVE>+ |
+                    ( name <STRING> | <EMPTY> )
+                       begin_bbox <OBJECT> end_bbox
+
+
+  <PRIMITIVE>     = <SPHERE> |
+                    <PARALLELOGRAM> |
+                    <RING> |
+                    <QUADRATIC> |
+                    <INSTANCE_OF>
+
+
+  <ATTRIBUTE>     = <SKY>               |
+                    foc_length <NUMBER> |
+                    <DEFAULT>           |
+                    file_name  <STRING> |
+                    <LAMP>              |
+                    <PATTERN>           |
+                    <OBSERVER>
+
+
+  <SPHERE>        = sphere '(' <SPHERE_DEF>+ ')'
+
+
+
+
+
+QRT Ray Tracer               Page 1          Context Free Grammar
+
+
+
+
+
+
+
+
+
+
+
+
+  <SPHERE_DEF>    = <POSITION>    |
+                    name <STRING> |
+                    radius  <NUM> |
+                    <CINFO>       |
+                    pattern <STRING> |
+                    remove  <STRING>
+
+
+  <PARALLELOGRAM> = parallelogram '(' <PAR_DEF>+ ')'
+
+
+  <PAR_DEF>       = <POSITION>     |
+                    name  <STRING> |
+                    v1    <VECTOR> |
+                    vect1 <VECTOR> |
+                    v2    <VECTOR> |
+                    vect2 <VECTOR> |
+                    <CINFO>        |
+                    pattern <STRING> |
+                    remove  <STRING>
+
+
+  <TRIANGLE>      = triangle '(' <TRIANGLE_DEF>+ ')'
+
+
+  <TRIANGLE_DEF>  = <POSITION>     |
+                    name  <STRING> |
+                    v1    <VECTOR> |
+                    vect1 <VECTOR> |
+                    v2    <VECTOR> |
+                    vect2 <VECTOR> |
+                    <CINFO>        |
+                    pattern <STRING> |
+                    remove  <STRING>
+
+
+  <RING>          = ring '(' <RING_REF>+ ')'
+
+
+  <RING_DEF>      = <POSITION>     |
+                    name  <STRING> |
+                    v1    <VECTOR> |
+                    vect1 <VECTOR> |
+                    v2    <VECTOR> |
+                    vect2 <VECTOR> |
+                    rad_1   <NUM>  |
+                    rad_2   <NUM>  |
+                    <CINFO>        |
+                    pattern <STRING> |
+                    remove  <STRING>
+
+
+
+QRT Ray Tracer               Page 2          Context Free Grammar
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <QUADRATIC>     = quadratic '(' <QUAD_DEF>+ ')'
+
+
+  <QUAD_DEF>      = <POSITION>    |
+                    name <STRING> |
+                    a       <NUM> |
+                    b       <NUM> |
+                    c       <NUM> |
+                    d       <NUM> |
+                    xmin    <NUM> |
+                    xmax    <NUM> |
+                    ymin    <NUM> |
+                    ymax    <NUM> |
+                    zmin    <NUM> |
+                    zmax    <NUM> |
+                    dir  <VECTOR> |
+                    <CINFO>       |
+                    pattern <STRING> |
+                    remove  <STRING>
+
+
+  <INSTANCE_OF>   = instance_of '(' <INSTANCE>+ ')'
+
+
+  <INSTANCE>      = name <STRING>       |
+                    <POSITION>          |
+                    scale    = <VECTOR>
+
+
+  <SKY>           = sky '(' <SKY_DEF>+ ')'
+
+
+  <SKY_DEF>       = zenith <COLOR_TRIPLE> |
+                    horiz  <COLOR_TRIPLE>
+
+
+  <DEFAULT>       = default '(' <DEFAULT_DEF>+ ')'
+
+
+  <DEFAULT_DEF>   = <CINFO>       |
+                    no_shadow     |
+                    no_lamp       |
+                    x_res <NUM>   |
+                    y_res <NUM>   |
+                    aspect <NUM>  |
+                    threshold <NUM>
+
+
+
+
+
+
+QRT Ray Tracer               Page 3          Context Free Grammar
+
+
+
+
+
+
+
+
+
+
+
+
+  <LAMP>          = lamp '(' <LAMP_DEF>+ ')'
+
+
+  <LAMP_DEF>      = <POSITION>    |
+                    radius  <NUM> |
+                    dist    <NUM> |
+                    <AMB>+
+
+
+  <OBSERVER>      = observer '(' <OBS_DEF>+ ')'
+
+
+  <OBS_DEF>       = <POSITION>      |
+                    lookat <VECTOR> |
+                    up     <VECTOR>
+
+
+  <PATTERN>       = pattern '(' <PATTERN_DEF>+ ')'
+
+
+  <PATTERN_DEF>   = x_size   <NUM>    |
+                    y_size   <NUM>    |
+                    name     <STRING> |
+                    '(' <SUB_PATTERN>+ ')'
+
+
+  <SUB_PATTERN>   = RECTANGLE <RECTANGLE_PAT> |
+                    CIRCLE    <CIRCLE_PAT>    |
+                    POLYGON   <POLY_PATT>
+
+
+  <RECTANGLE_PAT> = start_x   <NUM> |
+                    stary_y   <NUM> |
+                    start_z   <NUM> |
+                    end_x     <NUM> |
+                    end_y     <NUM> |
+                    end_z     <NUM> |
+                    <CINFO>
+
+
+  <CIRCLE_PAT>    = radius    <NUM>
+                    <CINFO>
+
+
+  <POLY_PATT>     = <CINFO>           |
+                    ( POINT    '(' <NUM>, <NUM> ')'  )+
+
+
+
+
+
+
+
+QRT Ray Tracer               Page 4          Context Free Grammar
+
+
+
+
+
+
+
+
+
+
+
+
+  <POSITION>      = LOC      <VECTOR> |
+                    POS      <VECTOR> |
+                    LOCATION <VECTOR> |
+                    POSITION <VECTOR>
+
+
+  <CINFO>         = <AMB>          |
+                    <DIFF>         |
+                    <TRANS>        |
+                    <DENSITY>      |
+                    <MIRROR>       |
+                    fuzz     <INT> |
+                    index    <NUM> |
+                    dither   <INT> |
+                    sreflect <NUM> |
+                    reflect  <NUM>
+
+
+  <AMB>           = amb     <COLOR_TRIPLE>
+
+
+  <DIFF>          = diff    <COLOR_TRIPLE>
+
+
+  <TRANS>         = trans   <COLOR_TRIPLE>
+
+
+  <MIRROR>        = mirror  <COLOR_TRIPLE>
+
+
+  <DENSITY>       = density <COLOR_TRIPLE>
+
+
+  <COLOR_TRIPLE>  = '(' <NUM>, <NUM>, <NUM> ')'
+
+
+  <VECTOR>        = '(' <NUM>, <NUM>, <NUM> ')'
+
+
+  <NUM>           =   <INT> |
+                    - <INT> |
+                      <INT> . <INT> |
+                    - <INT> . <INT>
+
+
+  <INT>           = <DIGIT>+
+
+
+  <DIGIT>         = 0|1|2|3|4|5|6|7|8|9
+
+
+
+
+QRT Ray Tracer               Page 5          Context Free Grammar
+
+
+
+
+
+
+
+
+
+
+
+
+  <STRING>        = ( <ALPHA> | <DIGIT> )+
+
+
+  <ALPHA>         = a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|
+                    q|r|s|t|u|v|w|x|y|z|_|*|-
+
+
+  <EMPTY>         =
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+QRT Ray Tracer               Page 6          Context Free Grammar
+
+
+
+
+
+

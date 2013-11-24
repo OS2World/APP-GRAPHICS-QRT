@@ -1,0 +1,594 @@
+
+
+
+
+
+
+        
+        
+                             QRT Technical Reference
+        
+        
+        INTRODUCTION
+        
+        The QRT ray tracing system  has  been  designed  to make the code
+        easily maintainable and  expandable.   An  object oriented design
+        philosophy was used for the  program,  and the resulting code has
+        been made as robust as practical given time constraints.
+        
+        This document explains the design of QRT.  First, the function of
+        each QRT C file will be listed.    Next,  the QRT data structures
+        will  be  explained,   and   finally,   some   details   of  code
+        implementation discussed.
+        
+        
+        QRT C CODE FILES
+        
+        The QRT code is broken down  into  16 C files and 3 header files,
+        each containing a group of related  functions.  The files are, in
+        alphabetical order:
+        
+           FILE              FUNCTION                              
+        
+           bbox.c            bounding box intersection routines
+           error.c           error reporting routines
+           inout.c           recursive decent input parser
+           instance.c        file for INSTANCE primitives
+           intersect.c       object intersection routines
+           lexer.c           simple lexical analyzer
+           mth.c             vector math support
+           norm.c            normal finding functions for objects
+           offset.c          offsets a primitive by dx, dy, dz
+           pattern.c         finds pattern info for objects
+           patternio.c       auxiliary parser for patterns
+           precomp.c         pre-computes some info for objects
+           qrt.c             main routine and initialization code
+           ray.c             actual ray tracing algorithims
+           relpos.c          finds relative position on an object
+           resize.c          resize any primitive
+           stack.c           stack and object creation routines
+        
+           header.h          instantiations of some global variables
+           pattern.h         pattern info
+           qrt.h             main data structure definitions
+        
+        
+        The function of each  group  of  routines  will  be  discussed in
+        greater detail in rest of this document.
+
+
+        QRT Ray Tracer               Page 1           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        DATA STRUCTURES
+        
+        All QRT data  structures  are  defined  in  qrt.h.   This file is
+        broken down into sections, as follows:
+        
+         OBJECT TYPE DEFINITIONS:
+           
+           C #define  statements  for  each  object  type  (sphere, lamp,
+           observer, etc).
+           
+           
+         MISC DEFINES
+           
+           Other #defines for screen size, etc.
+           
+           
+         VECTOR data structure
+           
+           A floating point 3-tuple vector definition.
+           
+           
+         COLOR VECTOR data structure
+           
+           A red,green,blue integer 3-tuple structure.
+           
+           
+         COLOR INFO structure
+           
+           This is an important structure. It lists color information for
+           an    object,    including    ambient    and   diffuse   light
+           characteristics,  reflection   and  transmission  data,  Phong
+           specular  reflection  coefficient,  index  of  refraction, and
+           object dithering data.
+           
+           
+         PRECOMPUTE structure
+           
+           This contains some fields which can be filled with precomputed
+           information before the ray-tracing  is begun.  This saves time
+           by eliminating redundant  calculations  for  every line/object
+           intersection.   The  use   of   these  fields  is  up  to  the
+           intersection routines.  Each  object  also  has a 'precompute'
+           routine which fills this structure.
+           
+           
+         PATTERN structure
+           
+           The  pattern  definition   structure  contains  a  color  info
+           structure.  It is used  to  change  the  characteristics  of a
+
+
+        QRT Ray Tracer               Page 2           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           primitive  object  over  the  surface  of  that  object.   For
+           example, checkered, brick, or tile patterns may be defined.
+           
+           
+         OBJECT structure
+           
+           The base structure of  QRT.   All  objects  are  defined as an
+           object structure.  This structure contains:
+           
+              A) A location vector for the object
+              B) 3 directional vectors
+              C) The object type flag
+              D) Some constants for QUADRATIC objects
+              E) A color info structure
+              F) Sibling and child pointers for the object tree
+              G) A pointer to a pattern structure
+              H) A pointer to a pattern for the REMOVE command
+              I) x and y multipliers for pattern sizing
+              J) A name field for the object
+           
+           
+         WORLD structure
+           
+           This structure contains all data about the world.  It contains
+           pointers to the object tree, the  lamp list, the observer, and
+           the sky, and the pattern  stack.   It  also contains statistic
+           information, such as  total  number  of  rays  traced, and the
+           output file name and pointer.
+           
+           
+         OBJECT_DATA structure
+           
+           The header.h file contains  an  array  of  this structure, one
+           array element per object type.   The structure itself contains
+           pointers to functions that perform  known operations on object
+           structures.  This design  allows  much cleaner code and easier
+           addition of object types.  The object function pointers are:
+           
+              ColTest:  Tests for object collisions
+           
+              FindNorm: Finds normal to surface at a given position
+           
+              FindBbox: Computes size of bounding box for object
+           
+              RelPos:   Finds relative position on object surface
+                        given a position in space
+           
+              PreComp:  Stuffs 'precomp' structure for each object
+                        before ray-tracing is begun.  The precomp and
+                        intersect routines must agree on the exact usage
+                        of the fields in this structure.
+
+
+        QRT Ray Tracer               Page 3           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+              Offset:   Moves a primitive by dx, dy, dz.  This is used
+                        for instances.
+           
+              Resize:   Resizes a primitive ( and scales its location
+                        vector).  This is also used for instances.
+           
+           This structure permits expressions such as:
+           
+              (*(ObjData[CurrObj->type].ColTest))(line,Currobj,&t);
+           
+           which means:
+           
+              (collision func for this obj type )(parameters);
+           
+           instead of a large case  statement.   Execution is faster, and
+           if new  objects  are  added,  the  code  does  not  have to be
+           changed.  If a  certain  operation  is  illegal  for a certain
+           object type, the ObjData  entry  points  to an Err() function.
+           This way, if something  goes  wrong,  execution  is terminated
+           gracefully instead of jumping to a random location in memory.
+           
+           
+         MATH defines
+           
+           MIN, MAX, SQRT, DotProd macros
+           
+           
+         DEFAULT structure
+           
+           Keeps default color information,  and a few other things, like
+           resolution and aspect ratio.
+           
+           
+         ERROR codes
+           
+           Defines for all possible error conditions
+           
+           
+         ROBUST flag
+           
+           There are many sections of code of the form:
+           
+              # ifdef ROBUST
+                 code
+              # endif
+           
+           such that, if ROBUST is defined, the bounds-checking code will
+           be compiled.  It is recommended  that this flag be always set,
+           although SLIGHTLY faster execution is possible with it reset.
+           
+
+
+        QRT Ray Tracer               Page 4           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        CODE DESCRIPTION
+        
+        The function of each section of  code  will  be described in more
+        detail here.
+        
+        
+         BBOX.C
+           
+           Contains code for each  object  type  that  will determine the
+           size of the bounding box for that  object.  Bounding boxes are
+           logical objects that contain other objects.  If a ray does not
+           strike a bounding box, it  cannot  possibly  strike any object
+           inside the box.  This  can  increase  execution  speed if used
+           correctly.
+           
+           Routines in BBOX.C are of the form:
+           
+             BboxSphere(v1,v2,obj)
+               VECT_PTR v1,v2;
+               OBJ_PTR obj;
+           
+           where v1 and  v2  are  vectors  for  the  two  corners  of the
+           bounding box, and obj is a pointer to an object.
+           
+           The functions  are  called  based  upon  their  pointer in the
+           ObjData structure.
+           
+           
+         ERROR.C
+         
+           This is a simple file that  contains  just  two routines.  The
+           first one is the Err() routine that  fills empty places in the
+           ObjData structure.   The  second  routine  is the actual error
+           reporting routine.  It takes  two  arguments: an error number,
+           and an error code.   The  error  number  is  a #define such as
+           'SYNTAX_ERROR'  or  'INTERNAL_ERROR'.   The  error  code is an
+           integer used to find the routine  in which the error occurred.
+           The error code  number  is  arbitrary  but  should  be  unique
+           throughout the program.  A convention has been set up that all
+           routines within one C file return  an error code with the same
+           first digit (501, 502,  503...).   If the error occurred while
+           parsing the input file, the offending  line number is printed.
+           Execution is always terminated after calling this routine.
+           
+           
+         INOUT.C
+           
+           This is a recursive decent parser  for the input language. The
+           parser was hand coded, since  YACC  or a similar compiler tool
+           was  not  available.   The   input   routines  perform  syntax
+
+
+        QRT Ray Tracer               Page 5           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+           checking, and some bounds checking.   The bounds checking will
+           catch some errors; however, it has not been idiot-proofed.  It
+           is up to the user to not make strange entries (radius=0, etc).
+           Most of these illogical errors will  be caught in the run-time
+           bounds checking.
+           
+           INOUT has one routine for  each  non-terminal  in the grammar.
+           The routine accepts parameters,  in any order, and branches to
+           another routine, or  inputs  a  value.   This  is  the largest
+           individual file, at over 1000 lines.
+           
+           
+         INSTANCE.C
+           
+           This contains the  routines  to  input  instance  definitions,
+           create a copy of a sub-tree, offset the subtree, and scale the
+           subtree.
+           
+           
+         INTERSECT.C
+           
+           This   file   contains   routines   to   perform   line/object
+           intersection tests.  Each routine is of the form:
+           
+             int LineSphere(line, sphere, t)
+                   OBJ_PTR line, sphere;
+                   float *t;
+           
+           where line and sphere are inputs, and t is an output.  Line is
+           always a line  object,  but  the  second  parameter  may  be a
+           pointer  a  different  object  for  a  different  intersection
+           routine.   The routine must  compute  the  parameter T for the
+           intersection point on the line, if any, and return TRUE if the
+           line hits the object, or FALSE if it does not.
+           
+           The functions  are  called  based  upon  their  pointer in the
+           ObjData structure.
+           
+           
+         LEXER.C
+           
+           This is a simple tokenizer  for  the  input language.  In this
+           implementation, #include directives for the input language are
+           not implemented, but they belong  in this routine. This module
+           also contains some  bounds  checking  code,   and  code to map
+           values  of   the   range   0..1   to   0..CNUM.    The   light
+           characteristics are stored as  an  integer from 0 to CNUM, but
+           the input values are a  floating  point  value from 0 to 1, so
+           these routines perform the conversion.
+           
+           
+
+
+        QRT Ray Tracer               Page 6           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+         MTH.C
+           
+           MTH contains support routines for  vector math, such as vector
+           addition, subtraction, and cross product.
+           
+           
+         NORM.C
+           
+           These routines find the normal vector  to an object at a given
+           location in space.  They are called  based upon the pointer in
+           the ObjData structure.  A typical entry is:
+           
+              SphereNorm(norm, object, position)
+                VECT_PTR norm, position;
+                OBJ_PTR object;
+           
+           where object and position are input, and norm is output.
+           
+           Often, several objects share  one  routine.  This happens, for
+           example,  with  planar  objects,  since  the  code to find the
+           normal to a plane is the same  regardless  of the shape of the
+           planar object.
+           
+           
+         OFFSET.C
+           
+           These routines are called by  the  object_data  structure. One
+           routine  exists  per  primitive  type,  and  they  offset  the
+           primitive by the given amount.
+           
+           
+         PATTERN.C
+           
+           When a ray/object intersection is  found, the pattern function
+           is called.  If  the  objects  pattern  pointer  is  NULL,  the
+           default color info for that object  is returned.  If it is not
+           NULL, the the relative position  on the surface of that object
+           is found, and the color info for  the pattern at that location
+           is returned.   If  the  relative  location  is  not inside any
+           sub-pattern, then the object's default color info is returned.
+           
+           To determine if  a  given  point  is  inside  a sub-pattern, a
+           similar strategy to the object intersection  routines is used.
+           There are several sub-pattern types  (RECTANGLE, CIRCLE, etc),
+           and there is a table  listing  pointers  to  containment  test
+           routines for each type.  This makes it easy to add sub-pattern
+           types.
+           
+
+
+
+
+
+        QRT Ray Tracer               Page 7           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+         PATTERNIO.C
+           
+           An auxiliary parser for  patterns,  created  because INOUT was
+           getting  too  large  to  comfortably  edit.   This  file  also
+           contains routines to copy  subtrees,  as well as to offset and
+           scale subtrees by calling routines from offset.c and resize.c
+           
+           
+         PRECOMP.C
+           
+           Contains  routines  to  stuff   the  'precomp'  structure  for
+           objects.  See the  documentation  for  the qrt.h file for more
+           details.   This  structure   saves   time  by  computing  some
+           expressions  that  do  not   change   with   each  line/object
+           intersection test.
+           
+           
+         QRT.C
+           
+           This module contains initialization code, and the main routine
+           that loads the 'world'  and  performs  the  ray tracing. It is
+           quite short.
+           
+           
+         RAY.C
+           
+           All of the ray tracing  logic  is  in  this module.  The basic
+           routine  is  Ray_Trace.   Ray_Trace  looks  for  a  ray/object
+           intersection.  If it  finds  one,  various  color routines are
+           called to compute the color of the  object at this point. Some
+           of these color routines may  call  Ray_Trace  recursively (for
+           reflection or transmission).
+           
+           Another important routine,  called  by  Ray_Trace, is Ray_Hit.
+           This actually tests  to  see  if  the  ray  hits  an object by
+           walking through the object tree.   If the 'first' flag is set,
+           the routine will quit after it  finds  one object intersection
+           (used to see if a surface is in the shadow of another object).
+           Otherwise, all intersections are sorted in order of increasing
+           parameter T, and the first such intersection returned.
+           
+           
+         RELPOS.C
+           
+           Routines in RELPOS  are  called  by  the  entry in the ObjData
+           array.  A typical routine is:
+           
+           
+               SpherePos(obj,loc,pos1,pos2)
+                 OBJ_PTR  obj;
+                 VECT_PTR loc;
+
+
+        QRT Ray Tracer               Page 8           Technical Reference
+
+
+
+
+
+
+
+
+
+
+
+
+                 float *pos1, *pos2;
+           
+           
+           where obj and loc are input, and  the routine must compute the
+           coordinates pos1 and pos2 on the  surface of the object.  This
+           is used to map patterns onto the surface of arbitrary objects.
+           It  is  straightforward   for   planar  surfaces.   For  other
+           surfaces, a mapping of the form:
+           
+               3-tuple(x,y,z) --> 2-tuple(x,y)
+           
+           must be created for the object.
+           
+           
+         RESIZE.C
+           
+           These routines resize objects, and  scale the location vector.
+           One routine exists per object.   They are used by the instance
+           routines (as are routines from offset.c).
+           
+           
+         STACK.C
+           
+           This file  contains  support  code  for  object  tree and list
+           manipulations.  The name "STACK"  is partially historical; the
+           initial implementation of the program did not permit arbitrary
+           object trees,  only  linear  lists.   STACK  also  contains an
+           object  creation  routine,   and  a  routine  to  print  world
+           statistics at the end of the ray tracing session.
+           
+           Note that  in  the  files  that  contain  object  manipulation
+           routines (indexed by the  object_data  structure array), there
+           is often a common routine for  several  similar  objects.  For
+           example, all planar objects  (PARALLELOGRAM,  RING,  TRIANGLE)
+           share a common normal finding routine.   If one of them should
+           suddenly need a different routine,  just create it, and change
+           the object_data pointer for that object.
+           
+           Patterns are dealt with in the same  manner as objects.  There
+           are currently three types of  pattern  primitives  (RECTANGLE,
+           CIRCLE,  and  POLYGON).   There   is  a  structure  (like  the
+           object_data structure) for patterns.  This structure currently
+           contains only one entry: a  pointer  to  a collision function.
+           Future capabilities  may  be  added  later,  along  with  more
+           primitive types.
+           
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 9           Technical Reference
+
+
+
+
+
+

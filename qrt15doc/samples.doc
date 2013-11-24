@@ -1,0 +1,792 @@
+
+
+
+
+
+
+        
+        
+                               QRT Sample Programs
+        
+        
+        Introduction
+        
+        The following are actual QRT input  files.  They can be used as a
+        guide to suggested QRT  indenting  style, or as a quick reference
+        to QRT commands.  They both use most  of the advanced features of
+        QRT, and would be good examples of  QRT programming.  These files
+        require QRT 1.4 or later to run correctly.
+        
+        
+        
+        File One
+        
+           
+           {**************************************************
+           
+               Walls with sphere - demonstrates pattern
+               mapping to sphere surfaces.
+           
+               Rendered with QRT ray tracer on Amiga 1000
+           
+               - Steve Koren   8 Jun 88
+           
+            **************************************************}
+           
+           
+           FILE_NAME = Wall_Sphere.RAW
+           
+           { *********   Some pattern definitions ********** }
+           
+           PATTERN ( x_size = 16,           { ** A stripe pattern ** }
+                     y_size = 8,            { ** for the sphere ** }
+                     name   = MIRROR_STRIPE,
+           
+                     RECTANGLE (
+                       start_x = 0, start_y = 0,
+                       end_x   = 16, end_y   = 4,
+           
+                       diff    = (.1, .1, .1),
+                       mirror  = (.8, .8, .8),
+                     )
+                   )
+           
+           PATTERN ( x_size = 60,        { ** Checkered pattern ** }
+                     y_size = 60,
+                     name   = CHECK,
+                     RECTANGLE (
+
+
+        QRT Ray Tracer               Page 1           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                       start_x = 0,
+                       start_y = 0,
+                       end_x   = 30,
+                       end_y   = 30,
+                       diff    = (.1,1.0,.1),
+                     )
+                     RECTANGLE (
+                       start_x = 30,
+                       start_y = 30,
+                       end_x   = 60,
+                       end_y   = 60,
+                       diff    = (.1,1.0,.1),
+                     )
+                   )
+           
+           PATTERN ( x_size = 40,        { ** Checkered pattern ** }
+                     y_size = 40,
+                     name   = CHECK_BLUE,
+                     RECTANGLE (
+                       start_x = 0,
+                       start_y = 0,
+                       end_x   = 20,
+                       end_y   = 20,
+                       diff    = (.7,.2,.7)
+                       amb     = (.32, .32, .32),
+                       reflect = .55
+                       sreflect= 20
+                     )
+                     RECTANGLE (
+                       start_x = 20,
+                       start_y = 20,
+                       end_x   = 40,
+                       end_y   = 40,
+                       diff    = (.7,.5,.7),
+                       amb     = (.32, .32, .32),
+                       reflect = .55
+                       sreflect= 20
+                     )
+                   )
+           PATTERN ( x_size = 80,               { ** brick pattern ** }
+                     y_size = 50,
+                     name   = BRICK,
+                     RECTANGLE (                { 1st half brick 1 }
+                       start_x = 0, start_y = 2,
+                       end_x   = 18, end_y   = 23,
+                       diff    = (1.00, .20, .20);
+                     )
+                     RECTANGLE (                { 2nd hald brick 1 }
+                       start_x = 62, start_y = 2,
+                       end_x   = 80, end_y   = 23,
+                       diff    = (1.00, .20, .20);
+
+
+        QRT Ray Tracer               Page 2           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                     )
+                     RECTANGLE (                { brick 2 }
+                       start_x = 22, start_y = 2,
+                       end_x   = 58, end_y   = 23,
+                       diff    = (.80, .20, .20);
+                     )
+                     RECTANGLE (                { brick 3 }
+                       start_x = 2, start_y = 27,
+                       end_x   = 38, end_y   = 48,
+                       diff    = (.85, .35, .10);
+                     )
+                     RECTANGLE (                { brick 4 }
+                       start_x = 42, start_y = 27,
+                       end_x   = 78, end_y   = 48,
+                       diff    = (.70, .25, .20);
+                     )
+                   )
+           
+           { *******************  OBJECTS  ******************* }
+           
+           { ** ground ** }
+           
+           PARALLELOGRAM ( loc  = (  -10000, 0,  -10000),
+                           v1   = (20000, 0,    0),
+                           v2   = (  0, 0, 20000),
+           
+                           diff = (  .8, .8, 0),
+                           pattern = CHECK
+                           xmult = 2
+                           ymult = 2
+                         )
+           
+           
+           BEGIN_BBOX
+           
+               BEGIN_BBOX
+           
+                   SPHERE ( loc = (200, 50, -80),
+                            radius = 35,
+                            diff = (.7, .3, .5),
+           
+                            pattern = MIRROR_STRIPE,
+                            xmult   = 1.5,
+                            ymult   = 1.5
+                          )
+           
+                   QUADRATIC ( loc = (200, 0, -80),
+           
+                               a    = 1,
+                               b    = 0,
+                               c    = 1,
+
+
+        QRT Ray Tracer               Page 3           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                               d    = 150,
+                               xmin = -13,
+                               xmax = 13,
+                               ymin = 0,
+                               ymax = 50,
+                               zmin = -13,
+                               zmax = 13,
+           
+                               diff = (.1, .1, .1),
+                               mirror = (.8, .8, .8)
+                             )
+           
+               END_BBOX
+           
+           
+               BEGIN_BBOX
+           
+                   SPHERE ( loc      = (200, 90, 80),
+                            radius   = 35,
+                            diff     = (.3, .3, .8),
+                            amb      = (.32, .32, .32),
+                            reflect  = .40
+                            sreflect = 20
+           
+                            pattern = CHECK_BLUE,
+                            xmult   = 1.0,
+                            ymult   = 1.0
+                          )
+           
+                   QUADRATIC ( loc = (200, 0, 80),
+           
+                               a    = 1,
+                               b    = 0,
+                               c    = 1,
+                               d    = 150,
+                               xmin = -13,
+                               xmax = 13,
+                               ymin = 0,
+                               ymax = 90,
+                               zmin = -13,
+                               zmax = 13,
+           
+                               diff = (.1, .1, .1),
+                               mirror = (.8, .8, .8)
+                             )
+           
+               END_BBOX
+           
+           END_BBOX
+           
+           
+
+
+        QRT Ray Tracer               Page 4           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+           BEGIN_BBOX
+           
+               { ** a small brick wall ** }
+           
+               PARALLELOGRAM ( loc = (150, 00, -15),
+                               v1  = (0, 0, 30),
+                               v2  = (0, 100, 0)
+           
+                               diff = (1, 1, 1),
+                               pattern = BRICK
+           
+                               xmult = .5,
+                               ymult = .5
+                             )
+           
+               PARALLELOGRAM ( loc = (150, 00, -15),
+                               v1  = (100, 0, 0),
+                               v2  = (0, 100, 0)
+           
+                               diff = (1, 1, 1),
+                               pattern = BRICK
+           
+                               xmult = .5,
+                               ymult = .5
+                             )
+           
+               PARALLELOGRAM ( loc = (150, 00, 15),
+                               v1  = (100, 0, 0),
+                               v2  = (0, 100, 0)
+           
+                               diff = (1, 1, 1),
+                               pattern = BRICK
+           
+                               xmult = .5,
+                               ymult = .5
+                             )
+           
+           END_BBOX
+           
+           
+           { ** An observer ** }
+           
+           OBSERVER ( loc    = (-20 , 70, -40),
+                      lookat = (200, 50, 0)
+                    )
+           
+           { ** A lamp ** }
+           
+           LAMP ( loc = (120, 120, -50),
+                  radius = 5,
+                  dist = 80
+
+
+        QRT Ray Tracer               Page 5           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                )
+           
+           LAMP ( loc = (120, 150, 80),
+                  radius = 5,
+                  dist = 70
+                )
+           
+           SKY  ( horiz  = (.2, .2, .55),
+                  zenith = (.1, .1, .25),
+                  dither = 4
+                )
+           
+           DEFAULT ( x_res = 320,      { ** parameters for Amiga ** }
+                     y_res = 400
+                     aspect= .56
+                   )
+           
+           FOC_LENGTH = 50
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 6           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        FILE 2
+           
+           
+           { **************************************************
+           
+              Glass table with vase and candy bowl.  This
+              is the first test of glass surfaces, and came out
+              surprisingly well - it actually does look like
+              glass!  This image requires QRT 1.4 to run.
+           
+              Rendered with QRT rayracing system
+           
+              Steve Koren -  23 AUG 88
+           
+             ************************************************** }
+           
+           
+           FILE_NAME = Table.RAW
+           
+           PATTERN ( x_size = 80,
+                     y_size = 30,
+                     name   = BLOCK,
+           
+                     RECTANGLE (
+                       start_x = 3,  start_y = 3,
+                       end_x   = 77, end_y   = 27,
+                       diff    = (.8, .7, .4);
+                     )
+                   )
+           
+           PATTERN ( x_size = 90,
+                     y_size = 90,
+                     name   = FLOOR,
+           
+                     RECTANGLE (
+                       start_x = 0,  start_y = 0,
+                       end_x   = 55, end_y   = 55,
+                       diff    = (.1, .8, .1)
+                     )
+           
+                     RECTANGLE (
+                       start_x = 60, start_y = 0
+                       end_x   = 85  end_y   = 55
+                       diff    = (.2, .3, .8)
+                     )
+           
+                     RECTANGLE (
+                       start_x = 0,  start_y = 60
+                       end_x   = 55  end_y   = 85
+                       diff    = (.2, .3, .8)
+
+
+        QRT Ray Tracer               Page 7           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                     )
+                   )
+           
+           BEGIN_INSTANCES
+           
+             { ** glass table leg - hollow glass cylender ** }
+           
+             NAME = table_leg;
+             BEGIN_BBOX
+           
+               QUADRATIC ( loc     = (0, 0, 0),
+                           a       = 1, b  = 0, c  = 1,
+                           d       = 300,
+           
+                           xmin    = -18, xmax = 18,
+                           ymin    = 0,   ymax = 70,
+                           zmin    = -18, zmax = 18,
+           
+                           diff    = (0, 0, 0),
+                           trans   = (.7, .7, .7),
+                           mirror  = (.25, .25, .25),
+                           index   = 1.33,
+                           density = (.022, .022, .022)
+                         )
+           
+               QUADRATIC ( loc     = (0, 0, 0),
+                           a       = 1, b  = 0, c  = 1,
+                           d       = 144,
+           
+                           xmin    = -12, xmax = 12,
+                           ymin    = 0,   ymax = 70,
+                           zmin    = -12, zmax = 12,
+           
+                           diff    = (0, 0, 0),
+                           trans   = (1, 1, 1),
+                           mirror  = (.1, .1, .1),
+                           index   = 1.33,
+                           density = (.022, .022, .022)
+                         )
+             END_BBOX
+           
+           END_INSTANCES
+           
+           { ******************** GROUND ********************** }
+           
+           PARALLELOGRAM ( loc = (-10000, 0, -10000),
+                           v1  = (0,0, 20000),
+                           v2  = (20000, 0, 0)
+           
+                           diff    = (.1, .1, .1),
+                           pattern = BLOCK
+
+
+        QRT Ray Tracer               Page 8           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                         )
+           
+           
+           { ******************** OBJECTS ********************** }
+           
+           { ** FLOOR ** }
+           
+           PARALLELOGRAM ( loc  = (80, .01, -20),
+                           v1   = (240, 0, 0),
+                           v2   = (0, 0, 240),
+                           diff = (0, 0, 0)
+           
+                           pattern = FLOOR
+                           xmult   = .8,
+                           ymult   = .8
+                         )
+           
+           { ** TABLE LEGS ** }
+           
+           BEGIN_BBOX
+             INSTANCE_OF ( name   = table_leg,
+                           loc    = (140, 0, 40)
+                         )
+           
+             INSTANCE_OF ( name   = table_leg,
+                           loc    = (260, 0, 40)
+                         )
+           END_BBOX
+           
+           BEGIN_BBOX
+             INSTANCE_OF ( name   = table_leg,
+                           loc    = (140, 0, 160)
+                         )
+           
+             INSTANCE_OF ( name   = table_leg,
+                           loc    = (260, 0, 160)
+                         )
+           END_BBOX
+           
+           { ** TABLE TOP ** }
+           
+           BEGIN_BBOX
+           
+             PARALLELOGRAM ( loc      = (100, 70, 0),
+                             v1       = (0, 0, 200),
+                             v2       = (200, 0, 0),
+           
+                             diff     = (0, 0, 0),
+                             trans    = (.7, .7, .7),
+                             mirror   = (.23, .23, .23),
+                             index    = 1.33,
+
+
+        QRT Ray Tracer               Page 9           QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                             density  = (.015, .015, .015)
+                           )
+           
+             PARALLELOGRAM ( loc      = (100, 85, 0),
+                             v1       = (0, 0, 200),
+                             v2       = (200, 0, 0),
+           
+                             diff     = (0, 0, 0),
+                             trans    = (1, 1, 1),
+                             mirror   = (.25, .25, .25),
+                             index    = 1.33,
+                             density  = (.015, .015, .015)
+                           )
+           
+           
+             { ** SIDES ** }
+           
+             PARALLELOGRAM ( loc = (100, 70, 0),
+                             v1  = (0, 0, 200),
+                             v2  = (0, 15, 0),
+           
+                             diff     = (0, 0, 0),
+                             trans    = (.7, .7, .7),
+                             mirror   = (.23, .23, .23),
+                             index    = 1.33,
+                             density  = (.016, .016, .016)
+                           )
+           
+             PARALLELOGRAM ( loc = (100, 70, 0),
+                             v1  = (200, 0, 0),
+                             v2  = (0, 15, 0),
+           
+                             diff     = (0, 0, 0),
+                             trans    = (.7, .7, .7),
+                             mirror   = (.23, .23, .23),
+                             index    = 1.33,
+                             density  = (.016, .016, .016)
+                           )
+           
+             PARALLELOGRAM ( loc = (100, 70, 200),
+                             v1  = (200, 0, 0),
+                             v2  = (0, 15, 0),
+           
+                             diff     = (0, 0, 0),
+                             trans    = (.7, .7, .7),
+                             mirror   = (.23, .23, .23),
+                             index    = 1.33,
+                             density  = (.016, .016, .016)
+                           )
+           
+             PARALLELOGRAM ( loc = (300, 70, 0),
+
+
+        QRT Ray Tracer               Page 10          QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                             v1  = (0, 0, 200),
+                             v2  = (0, 15, 0),
+           
+                             diff     = (0, 0, 0),
+                             trans    = (.7, .7, .7),
+                             mirror   = (.23, .23, .23),
+                             index    = 1.33,
+                             density  = (.016, .016, .016)
+                           )
+           
+           END_BBOX
+           
+           { ** CANDY BOWL  & VASE ** }
+           
+           BEGIN_BBOX
+           
+             BEGIN_BBOX
+               QUADRATIC ( loc     = (200, 100, 100),
+                           a       = 1, b  = 2, c  = 1,
+                           d       = 900,
+           
+                           xmin    = -30, xmax = 30,
+                           ymin    = -15, ymax = 0,
+                           zmin    = -30, zmax = 30,
+           
+                           diff    = (1, .1, .1),
+                           reflect = .8
+                           sreflect= 20
+                         )
+           
+               SPHERE   ( loc      = (185, 95, 110),
+                          radius   = 7,
+                          diff     = (.1, .1, 1)
+                        )
+           
+               SPHERE   ( loc      = (200, 93, 80),
+                          radius   = 7,
+                          diff     = (.1, 1, .1)
+                        )
+           
+             END_BBOX
+           
+             { ** VASE ** }
+           
+             BEGIN_BBOX
+           
+               QUADRATIC ( loc     = (260, 85, 50),
+                           a       = 1, b = 0, c = 1,
+                           d       = 100,
+           
+                           xmin    = -10, xmax = 10,
+
+
+        QRT Ray Tracer               Page 11          QRT Sample Programs
+
+
+
+
+
+
+
+
+
+
+
+
+                           ymin    = 0,   ymax = 50,
+                           zmin    = -10, zmax = 10,
+           
+                           diff    = (.1, .7, .1),
+                           reflect = .7,
+                           sreflect=20
+                         )
+             END_BBOX
+           
+           END_BBOX
+           
+           OBSERVER ( loc    = (-50, 180, -30)
+                      lookat = (180, 50, 100)
+                    )
+           
+           SKY ( horiz  = (.10, .1, .75)
+                 zenith = (.10, .1, .60)
+                 dither = 4
+               )
+           
+           LAMP ( loc = (150, 250, -80)
+                  radius = 5,
+                  dist = 250
+                )
+           
+           LAMP ( loc = (250, 50, 250),
+                  radius = 5,
+                  dist   = 60
+                )
+           
+           
+           DEFAULT ( x_res = 320,       { Amiga parameters }
+                     y_res = 400
+                     aspect= .56
+                   )
+           
+           FOC_LENGTH = 50
+           
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 12          QRT Sample Programs
+
+
+
+
+
+

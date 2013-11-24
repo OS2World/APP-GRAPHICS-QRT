@@ -1,0 +1,330 @@
+
+
+
+
+
+
+        
+        
+        
+                           Addendum to QRT Version 1.4
+        
+        
+        
+        The following are changes to QRT made since version 1.3
+        
+        Additions and Enhancements
+        
+           Transmission
+               
+               Transmission of light through surfaces now works, allowing
+               one to  model  glass  surfaces.   Some  additions  to  and
+               changes  from  the  original  grammar  were  necessary  to
+               provide  the  desired   functionality.    A  new  keyword,
+               "DENSITY", has been  added,  and  the  function of the old
+               "TRANS" keyword has  been  changed.   Also,  a "THRESHOLD"
+               parameter has been added to the  default structure.  Since
+               transmission is a complex operation,  this entire Addendum
+               will discuss aspects of modeling glass surfaces.
+               
+           The DENSITY keyword
+               
+               It was my previous  intent  that  the  TRANS keyword would
+               specify  the  percent  transmission  of  light  though the
+               surface.  After thinking a little more about the nature of
+               light  transmission,  it   was   clear  that  this  wasn't
+               adequate.  The amount  of  light  transmitted  depends not
+               only on a fixed  coefficient  of  the  surface, but on the
+               thickness of the  surface.   For  example,  a hollow glass
+               sphere will appear darker  (transmit  less light) near the
+               edges, where the glass is  thickest.   To account for this
+               effect,  the  "DENSITY"   keyword   was  added.    Density
+               specifies what  percentage  of  transmitted  light will be
+               removed per unit  distance  travelled  though  the object.
+               For example, the following density  attribute would remove
+               2 percent of all light per unit distance:
+               
+                    DENSITY = (.02, .02, .02);
+               
+               If a sphere, at its widest  point,  was 10 units thick, 20
+               percent of the light would  be  removed.  Near the edge of
+               the sphere, less light would be removed.
+               
+               Since density is a function of  distance, the same density
+               factor will have different effects on objects of different
+               sizes.  To remove the  same  percentage  of  light from an
+               object half as thick, double the density factor.
+               
+
+
+        QRT Ray Tracer               Page 1               Addendum to 1.4
+
+
+
+
+
+
+
+
+
+
+
+
+           Shadows from Transparent Surfaces
+               
+               The old "TRANS" keyword  still  exists,  but it performs a
+               different function.  It does not  affect the appearance of
+               the object, but rather, the  attenuation  of  light passed
+               through the surface.  QRT  knows  how  glass surfaces bend
+               light, and so it  can  model  the  magnifying  effects  of
+               looking through  curved  glass,  etc.   But  for computing
+               shadows, it cannot  properly  bend  the  light from lamps.
+               This means that you  can  model  lenses  that the observer
+               looks through, but  not  lenses  used  to focus light.  In
+               order to provide  some attenuation effects, use "TRANS" to
+               tell QRT how much light  is  passed  through  the surface.
+               This information is ONLY used  for computing shadows.  For
+               example,  blue  glass  should  cast  a  blue  shadow.  Use
+               something similar to:
+               
+                        TRANS = (0, 0, .7)
+               
+               to cast a blue shadow (this  lets  70  percent of the blue
+               light pass).  Note that by  using  strange combinations of
+               DENSITY and TRANS, you can  model  illogical objects which
+               appear, for example, blue,  but  cast a red shadow.  These
+               shadows will be entirely of  one  intensity,  and will not
+               vary with the thickness of the glass.
+               
+           Using MIRROR with Transparent surfaces
+               
+               Glass surfaces not only refract  light, but also reflect a
+               percentage of it.  This means  that to realistically model
+               glass, the glass should reflect  a small percentage of the
+               light.   Try starting with  20  to  25 percent reflection.
+               Note that all glass objects  reflect  light  from both the
+               outside and the inside surfaces of the glass.
+               
+           Index of Refraction
+               
+               The index of refraction for an object governs how much the
+               light is bent  upon  entering  or  exiting  the object.  A
+               higher index will  bend  the  light  more.   The  index of
+               refraction of air is 1.00, and  for glass is roughly 1.33.
+               Some substances, such as diamond, have a higher index.
+               
+           Modeling Hollow Objects
+               
+               When designing the QRT transmission  routines, I wanted to
+               be able  to  model  both  solid  glass  and  hollow  glass
+               objects.  To understand how this  is done, it is necessary
+               to understand a little about how  QRT's transmission model
+               works.
+               
+
+
+        QRT Ray Tracer               Page 2               Addendum to 1.4
+
+
+
+
+
+
+
+
+
+
+
+
+               A ray, after leaving the observer,  has two states: either
+               it is inside a glass  object,  or  it is outside.  The ray
+               starts out outside.   When  it  first  encounters  a glass
+               surface, it is bent, and its state is toggled from OUTSIDE
+               to INSIDE.  It continues  on  until  encountering  another
+               surface, whereupon it is bent again, and its state is once
+               more toggled.  This has several  implications for modeling
+               glass.  The first is that ALL glass surfaces MUST have two
+               sides - that is, once the ray enters the glass, there must
+               be no way for it to exit  without  again passing through a
+               surface.  The second is that  a  ray must go from glass to
+               air, or air to glass,  but  not  from  glass with index of
+               refraction A to glass with index of refraction B; i.e, the
+               two glass surfaces cannot  touch  each  other, even though
+               they may be placed very close together.
+               
+               As an example of how this  works,  consider  a solid glass
+               sphere.  The ray encounters  the  sphere,  and is bent (in
+               this case, towards the normal  vector).  QRT now remembers
+               that  the  ray  is  INSIDE  a  glass  surface.    The  ray
+               continues on until it hits  the  back  side of the sphere,
+               whereupon it is bent (away  from  the  normal vector), and
+               its  state  is  toggled  to   OUTSIDE.   In  summary,  the
+               INSIDE/OUTSIDE flag tells QRT how to bend the ray.
+               
+               Consider now the case of a  hollow  glass sphere.  This is
+               modeled using two concentric  spheres,  one with a smaller
+               radius.  The ray will  first  hit  the  outside sphere, be
+               bent, and have its state toggled  to INSIDE. There are now
+               two possible cases.  First,  the  ray  may miss the inside
+               sphere, in which case the  simulation  proceeds  as in the
+               above paragraph.  Second,  it  may  hit the inside sphere.
+               In this case, it is  bent,  and  its  state  is toggled to
+               OUTSIDE.  The ray is now considered  to be back in air, so
+               that the inside sphere has  modeled  the hollow portion of
+               the glass.  In a similar manner, the ray reaches the other
+               side of the inside  sphere,  enters  the  glass again, and
+               finally leaves the outside sphere.   Note that even though
+               the inside sphere is thought of as the "air" in the center
+               of the object, it MUST have  the  same index of refraction
+               as the outside sphere.  This is  necessary so that QRT can
+               correctly bend the light when it exits the glass.
+               
+           Chromatic Aberration
+               
+               In QRT,  all  rays,  regardless  of  color,  are refracted
+               exactly the same.  This is contrast  to the real world, in
+               which  the  amount  the  light  is  bent  depends  on  its
+               wavelength.  This appears,  so  far as I can tell, to be a
+               bug in the real world, and I  saw  no reason to include it
+               in a ray tracer.
+
+
+        QRT Ray Tracer               Page 3               Addendum to 1.4
+
+
+
+
+
+
+
+
+
+
+
+
+               
+           Threshold attribute
+               
+               A new keyword, THRESHOLD,  has  been  added to the default
+               structure.   In  previous  versions  of  QRT,  there was a
+               mechanism for detecting  infinite  recursion provided that
+               objects  reflected  less  that  100  percent  of the light
+               reaching  them.   QRT   stopped  the  recursion  when  the
+               intensity of the light  reached  1 percent of its original
+               value.  When  transmission  was  added,  I made this value
+               adjustable.  With  glass  objects,  both  surfaces reflect
+               light, and if QRT waits  until  the  1 percent mark before
+               stopping recursion,  the  time  necessary  to complete the
+               image is greatly increased  with  little or no increase in
+               image quality.   The  default  is  now  10 percent, and is
+               changeable as follows:
+               
+                    DEFAULT ( threshold = .05
+                            )
+               
+               This would stop  recursion  when  the  intensity reaches 5
+               percent of the original value.  An added effect is that if
+               the objects surface reflects (or  transmits) less than the
+               threshold amount of light, the  reflection or transmission
+               will be ignored completely.
+               
+           Affect of Glass on Speed
+               
+               Unfortunately, the presence of any glass objects will slow
+               the ray tracer down.  This  effect  may  range from barely
+               noticeable,  for  few,  small  objects  to  excruciatingly
+               miserably slow, for many, large  objects.  Sorry, there is
+               nothing I can do to speed it  up  - the 68000 simply won't
+               go any faster.  The reason for the 
+               slowdown is that for every ray/glass surface intersection,
+               TWO additional rays must be  sent  out (as opposed to one,
+               for reflection).   And  remember,  each  ray  intersects a
+               glass object twice: once on  the  way  in, and once on the
+               way out.  Also, the two  generated  rays may intersect the
+               glass, as well.  You can  see  how  this process could get
+               very slow.
+               
+        Notes, etc.
+           
+           Watch for control  characters  in  the  QRT input file.  I had
+           accidentally imbedded an invisible control character in a file
+           I was working on, and  the  QRT  parser  refused  to parse the
+           file.  After closely checking the  file, I began to look for a
+           bug in the parser  code.   Finally,  I  discovered the control
+           character, but only after spending  1 hour checking the parser
+           code.  The QRT parser will  generate  a SYNTAX ERROR, CODE 207
+
+
+        QRT Ray Tracer               Page 4               Addendum to 1.4
+
+
+
+
+
+
+
+
+
+
+
+
+           upon encountering any special characters in the input file.
+           
+           Since transmission involves  heavy  recursion, don't forget to
+           set the default  stack  size  to  something  larger  than  the
+           default 4000 bytes.  A  stack  size  of  40000  to 50000 bytes
+           seems safe for most images.
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        QRT Ray Tracer               Page 5               Addendum to 1.4
+
+
+
+
+
+
